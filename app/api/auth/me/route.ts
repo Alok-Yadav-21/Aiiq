@@ -15,12 +15,7 @@ export async function GET(req: NextRequest) {
       email: true,
       image: true,
       role: true,
-      platformRole: true,
       createdAt: true,
-      managedUniversityId: true,
-      studentProfile: {
-        select: { universityId: true, departmentId: true, programmeId: true, academicYearId: true },
-      },
       profile: {
         select: {
           bio: true,

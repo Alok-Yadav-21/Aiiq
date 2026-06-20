@@ -92,21 +92,6 @@ export const uploadMaterialSchema = z.object({
   audienceLevel: z.enum(['undergraduate', 'postgraduate', 'professional']).optional(),
 })
 
-// ─── Teacher Onboarding ───────────────────────────────────────────────────────
-
-export const teacherApplySchema = z.object({
-  fullName: z.string().min(2, 'Full name is required').max(120),
-  universityEmail: z.string().email('Enter a valid university email'),
-  staffId: z.string().min(1, 'Employee/staff ID is required').max(60),
-  universityId: z.string().cuid('Select your university'),
-  facultyId: z.string().cuid().optional(),
-  departmentId: z.string().cuid().optional(),
-  professionalTitle: z.string().max(120).optional(),
-  modulesTaught: z.array(z.string().max(120)).max(30).default([]),
-  verificationDocUrl: z.string().max(500).optional(),
-})
-export type TeacherApplyInput = z.infer<typeof teacherApplySchema>
-
 // ─── AI Chat ──────────────────────────────────────────────────────────────────
 
 export const chatMessageSchema = z.object({

@@ -6,9 +6,7 @@ import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
 import {
   LayoutDashboard, BookOpen, Swords, Settings, Trophy,
-  TrendingUp, Plus, ChevronRight, Zap, Crown, Target,
-  GraduationCap, ShieldCheck, MessageSquare, MessageSquarePlus, BookOpenCheck,
-  LayoutGrid, Building2, Bell
+  TrendingUp, Plus, ChevronRight, Zap, Crown, Target, Bell
 } from 'lucide-react'
 
 const navItems = [
@@ -27,23 +25,7 @@ const bottomItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { user, isStarter, isPro, isTeacher, isUniversityAdmin } = useAuth()
-
-  // Role-based navigation (teacher-support system).
-  const isStudent = !isTeacher && !isUniversityAdmin
-  const roleItems = [
-    isStudent && { href: '/support/new', icon: MessageSquarePlus, label: 'Ask a Teacher' },
-    isStudent && { href: '/support', icon: MessageSquare, label: 'My Questions' },
-    isStudent && { href: '/learning', icon: BookOpenCheck, label: 'Teacher Content' },
-    isTeacher && { href: '/teacher', icon: GraduationCap, label: 'Teacher Dashboard' },
-    isTeacher && { href: '/support', icon: MessageSquare, label: 'Student Questions' },
-    isTeacher && { href: '/teacher/content', icon: BookOpenCheck, label: 'Create Content' },
-    isStudent && { href: '/teacher/apply', icon: GraduationCap, label: 'Become a Teacher' },
-    isUniversityAdmin && { href: '/admin', icon: LayoutGrid, label: 'Admin Dashboard' },
-    isUniversityAdmin && { href: '/admin/academic', icon: Building2, label: 'Departments' },
-    isUniversityAdmin && { href: '/admin/teachers', icon: ShieldCheck, label: 'Teacher Approvals' },
-    isUniversityAdmin && { href: '/support', icon: MessageSquare, label: 'Support Requests' },
-  ].filter(Boolean) as { href: string; icon: typeof GraduationCap; label: string }[]
+  const { user, isStarter, isPro } = useAuth()
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-white/5 bg-bg-surface pt-16">
@@ -91,27 +73,6 @@ export function Sidebar() {
               </Link>
             )
           })}
-
-          {roleItems.length > 0 && (
-            <div className="pt-2 mt-2 border-t border-white/5 space-y-0.5">
-              {roleItems.map((item) => {
-                const isActive = pathname?.startsWith(item.href)
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-                      isActive ? 'bg-allq-cyan/10 text-allq-cyan border border-allq-cyan/20' : 'text-slate-400 hover:text-white hover:bg-white/5',
-                    )}
-                  >
-                    <item.icon className="h-4.5 w-4.5 flex-shrink-0" />
-                    <span className="flex-1">{item.label}</span>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
         </nav>
 
         {/* Upgrade Banner */}
