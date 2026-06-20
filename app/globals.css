@@ -191,6 +191,65 @@ body {
   }
 }
 
+@layer components {
+  /* ─── Premium light design system (AIIQ redesign) ───────────────────────────
+     Additive tokens: existing dark pages are untouched until converted.
+     Pattern: dark app chrome (navbar/sidebar) + soft-neutral light content. */
+
+  /* Light page canvas — fills the content area below the navbar. */
+  .app-canvas {
+    background-color: #eef1f6;
+    min-height: calc(100vh - 4rem);
+  }
+
+  /* White rounded card with soft shadow. */
+  .surface-card {
+    background: #ffffff;
+    border: 1px solid #eef0f4;
+    border-radius: 1rem;
+    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
+  }
+  .surface-card-hover {
+    @apply surface-card transition-all duration-200;
+  }
+  .surface-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+  }
+
+  /* Light form control. */
+  .input-light {
+    background: #ffffff;
+    border: 1px solid #e2e6ee;
+    color: #0f172a;
+    border-radius: 0.75rem;
+    transition: all 0.18s ease;
+  }
+  .input-light:focus {
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+    outline: none;
+  }
+  .input-light::placeholder { color: #94a3b8; }
+
+  /* Primary gradient action (works on light surfaces). */
+  .btn-grad {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    color: #fff;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .btn-grad:hover { opacity: 0.92; }
+  .btn-grad:active { transform: translateY(1px); }
+
+  /* Light shimmer skeleton (for converted pages). */
+  .skeleton-light {
+    background: linear-gradient(90deg, #eef0f4 25%, #e3e7ee 50%, #eef0f4 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+}
+
 /* Animation delays */
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }

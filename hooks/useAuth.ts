@@ -93,8 +93,6 @@ export function useAuth() {
     }
   }
 
-  const platformRole = store.user?.platformRole || 'STUDENT'
-
   return {
     user: store.user,
     token: store.token,
@@ -102,11 +100,6 @@ export function useAuth() {
     isAuthenticated: !!store.user,
     isPro: store.user?.subscription?.plan === 'PRO',
     isStarter: store.user?.subscription?.plan === 'STARTER' || store.user?.subscription?.plan === 'PRO',
-    // Platform roles (teacher-support system)
-    platformRole,
-    isTeacher: platformRole === 'TEACHER' || platformRole === 'PLATFORM_ADMIN',
-    isUniversityAdmin: platformRole === 'UNIVERSITY_ADMIN' || platformRole === 'PLATFORM_ADMIN',
-    isPlatformAdmin: platformRole === 'PLATFORM_ADMIN',
     register,
     login,
     logout,

@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken } from './lib/auth'
 
-const publicRoutes = ['/', '/login', '/signup', '/pricing', '/about', '/terms', '/privacy', '/forgot-password', '/reset-password', '/compete/preview', '/teacher/apply']
+const publicRoutes = ['/', '/login', '/signup', '/pricing', '/about', '/terms', '/privacy', '/forgot-password', '/reset-password', '/compete/preview']
 const authRoutes = ['/login', '/signup']
-const protectedRoutes = ['/dashboard', '/subjects', '/compete', '/settings', '/profile', '/challenges', '/analytics', '/teacher', '/admin']
+const protectedRoutes = ['/dashboard', '/subjects', '/compete', '/settings', '/profile', '/challenges', '/analytics']
 // Paths that start with a protected prefix but are actually public
 const publicExceptions = ['/compete/preview']
-
-// Role-gated route prefixes. PLATFORM_ADMIN passes everything.
-const teacherRoutes = ['/teacher']
-const adminRoutes = ['/admin']
-// Teacher onboarding is open to any logged-in user (students applying to become teachers).
-const teacherRouteExceptions = ['/teacher/apply', '/teacher/status']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -33,21 +27,6 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('callbackUrl', pathname)
       return NextResponse.redirect(loginUrl)
-    }
-
-    // ── Role-based gating ──
-    const role = payload.platformRole
-    const isSuper = role === 'PLATFORM_ADMIN'
-
-    const needsTeacher = teacherRoutes.some((r) => pathname.startsWith(r)) &&
-      !teacherRouteExceptions.some((r) => pathname.startsWith(r))
-    if (needsTeacher && role !== 'TEACHER' && !isSuper) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-
-    const needsAdmin = adminRoutes.some((r) => pathname.startsWith(r))
-    if (needsAdmin && role !== 'UNIVERSITY_ADMIN' && !isSuper) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 

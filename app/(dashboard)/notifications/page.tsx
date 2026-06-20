@@ -5,17 +5,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Bell, Check, GraduationCap, MessageSquare, BookOpenCheck, ShieldCheck } from 'lucide-react'
+import { Bell, Check, Trophy, Swords } from 'lucide-react'
 
 const ICON: Record<string, typeof Bell> = {
-  SUPPORT_NEW: MessageSquare, SUPPORT_REPLY: MessageSquare, SUPPORT_ANSWER: MessageSquare,
-  TEACHER_STATUS: ShieldCheck, CONTENT_NEW: BookOpenCheck,
+  COMPETITION: Swords, ACHIEVEMENT: Trophy, RANK: Trophy,
 }
 function hrefFor(n: { type: string; data?: unknown }): string | null {
   const d = (n.data || {}) as Record<string, string>
-  if (n.type?.startsWith('SUPPORT') && d.requestId) return `/support/${d.requestId}`
-  if (n.type === 'CONTENT_NEW' && d.contentId) return `/learning/${d.contentId}`
-  if (n.type === 'TEACHER_STATUS') return '/teacher/status'
+  if (n.type === 'COMPETITION' && d.roomId) return `/compete/room/${d.roomId}`
   return null
 }
 

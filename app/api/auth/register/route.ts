@@ -55,7 +55,6 @@ export async function POST(req: NextRequest) {
       sub: user.id,
       email: user.email,
       role: user.role,
-      platformRole: user.platformRole,
       sessionId: session.id,
     })
 
@@ -67,7 +66,6 @@ export async function POST(req: NextRequest) {
           name: user.name,
           email: user.email,
           role: user.role,
-          platformRole: user.platformRole,
           subscription: user.subscription,
           profile: user.profile,
         },

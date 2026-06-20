@@ -6,7 +6,6 @@ export interface AuthUser {
   name: string | null
   image: string | null
   role: UserRole
-  platformRole?: PlatformRole
   subscription?: {
     plan: SubscriptionPlan
     status: string | null
@@ -22,7 +21,6 @@ export interface AuthUser {
 }
 
 export type UserRole = 'GUEST' | 'FREE' | 'STARTER' | 'PRO' | 'ADMIN'
-export type PlatformRole = 'STUDENT' | 'TEACHER' | 'UNIVERSITY_ADMIN' | 'PLATFORM_ADMIN'
 export type SubscriptionPlan = 'FREE' | 'STARTER' | 'PRO'
 export type SubjectDifficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT'
 export type QuestionType = 'MCQ' | 'TRUE_FALSE' | 'FILL_IN_THE_BLANK' | 'SHORT_ANSWER'

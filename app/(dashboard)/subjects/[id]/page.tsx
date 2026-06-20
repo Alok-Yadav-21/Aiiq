@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -15,7 +14,7 @@ import { useToast } from '@/hooks/useToast'
 import {
   BookOpen, Upload, Brain, ChevronLeft,
   FileText, Image as ImageIcon, Type,
-  Sparkles, Check, X, Loader2, Clock, AlertTriangle, MessageSquarePlus,
+  Sparkles, Check, X, Loader2, Clock, AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -510,9 +509,6 @@ export default function SubjectDetailPage() {
           <Button onClick={() => setShowGenerateQuiz(true)}>
             <Brain className="h-4 w-4" /> Generate Quiz
           </Button>
-          <Link href={`/support/new?subjectId=${params.id}`}>
-            <Button variant="ghost"><MessageSquarePlus className="h-4 w-4" /> Ask a Teacher</Button>
-          </Link>
         </div>
       </div>
 

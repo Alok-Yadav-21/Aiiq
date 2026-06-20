@@ -16,7 +16,6 @@ export interface JWTPayload {
   sub: string
   email: string
   role: string
-  platformRole: string   // STUDENT | TEACHER | UNIVERSITY_ADMIN | PLATFORM_ADMIN
   sessionId: string
   iat?: number
   exp?: number
