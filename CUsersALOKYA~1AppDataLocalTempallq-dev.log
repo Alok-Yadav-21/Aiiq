@@ -1,0 +1,12 @@
+
+> allq@1.0.0 dev
+> node server.js
+
+
+🚀 AllQ is running!
+   App:       http://localhost:3000
+   Env:       development
+
+   Run WebSocket server separately:
+   node server/ws-server.js
+
