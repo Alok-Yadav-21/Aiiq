@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
-import { cn, getRankBadge, formatCurrency, formatRelativeTime } from '@/lib/utils'
+import { cn, getRankBadge, formatRelativeTime } from '@/lib/utils'
 import {
   Swords, Trophy, Crown, Clock, CheckCircle, XCircle,
   Zap, Users, Target, Plus, Lock, AlertCircle
@@ -21,7 +21,6 @@ type ChallengeStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED' | 'EXPI
 interface Challenge {
   id: string
   status: ChallengeStatus
-  wagerAmount: number
   expiresAt: string
   createdAt: string
   subject?: { title: string; id: string }
@@ -83,15 +82,15 @@ function ChallengeCard({ challenge, userId, onAccept, onDecline }: {
 
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-bold text-white">{opponent.name || 'Anonymous'}</span>
+                  <span className="text-sm font-bold text-slate-900">{opponent.name || 'Anonymous'}</span>
                   <span className="text-xs font-medium" style={{ color: opponentRank.color }}>
                     {opponentRank.label}
                   </span>
                   <span className="text-xs text-slate-500">{opponent.profile?.eloRating || 1200} ELO</span>
                 </div>
                 {challenge.subject && (
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Subject: <span className="text-slate-300">{challenge.subject.title}</span>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Subject: <span className="text-slate-700 font-medium">{challenge.subject.title}</span>
                   </p>
                 )}
                 <p className="text-xs text-slate-500 mt-0.5">{formatRelativeTime(challenge.createdAt)}</p>
@@ -99,12 +98,6 @@ function ChallengeCard({ challenge, userId, onAccept, onDecline }: {
             </div>
 
             <div className="flex flex-col items-end gap-2">
-              {challenge.wagerAmount > 0 && (
-                <div className="flex items-center gap-1.5 text-allq-amber font-bold text-sm">
-                  <Trophy className="h-3.5 w-3.5" />
-                  {formatCurrency(challenge.wagerAmount)}
-                </div>
-              )}
               <div className={cn('flex items-center gap-1 text-xs font-medium', status.color)}>
                 <StatusIcon className="h-3.5 w-3.5" />
                 {status.label}
@@ -113,7 +106,7 @@ function ChallengeCard({ challenge, userId, onAccept, onDecline }: {
           </div>
 
           {canRespond && (
-            <div className="flex gap-2 mt-4 pt-4 border-t border-white/5">
+            <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
               <Button
                 size="sm"
                 className="flex-1"
@@ -133,7 +126,7 @@ function ChallengeCard({ challenge, userId, onAccept, onDecline }: {
           )}
 
           {challenge.status === 'ACCEPTED' && (
-            <div className="mt-4 pt-4 border-t border-white/5">
+            <div className="mt-4 pt-4 border-t border-slate-100">
               <Link href="/compete">
                 <Button size="sm" className="w-full gap-2">
                   <Swords className="h-3.5 w-3.5" /> Play Now
@@ -191,19 +184,19 @@ export default function ChallengesPage() {
 
   if (!canUseChallenge) {
     return (
-      <div className="p-6 lg:p-8 max-w-4xl">
-        <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
+      <div className="px-5 py-7 lg:px-9 lg:py-9 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
           <Swords className="h-7 w-7 text-allq-purple" /> Challenges
         </h1>
-        <p className="text-slate-400 mb-8">1v1 direct challenges with other players</p>
+        <p className="text-slate-500 mb-8">1v1 direct challenges with other players</p>
 
-        <div className="glass rounded-2xl p-10 text-center border border-allq-amber/20">
+        <div className="surface-card rounded-2xl p-10 text-center border border-allq-amber/20">
           <div className="h-16 w-16 rounded-2xl bg-allq-amber/10 flex items-center justify-center mx-auto mb-4">
             <Crown className="h-8 w-8 text-allq-amber" />
           </div>
-          <h2 className="text-xl font-black text-white mb-2">Starter+ Required</h2>
-          <p className="text-slate-400 mb-6 max-w-sm mx-auto">
-            Challenge other players directly, set wagers, and compete head-to-head on any subject.
+          <h2 className="text-xl font-black text-slate-900 mb-2">Starter+ Required</h2>
+          <p className="text-slate-500 mb-6 max-w-sm mx-auto">
+            Challenge other learners directly and go head-to-head on any subject.
           </p>
           <Link href="/pricing">
             <Button><Zap className="h-4 w-4" /> Upgrade Now</Button>
@@ -228,7 +221,7 @@ export default function ChallengesPage() {
     <div className="p-6 lg:p-8 max-w-4xl">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-white flex items-center gap-3">
+          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             <Swords className="h-7 w-7 text-allq-purple" /> Challenges
             {incomingCount > 0 && (
               <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-allq-red text-white text-xs font-bold">
@@ -236,7 +229,7 @@ export default function ChallengesPage() {
               </span>
             )}
           </h1>
-          <p className="text-slate-400 mt-0.5">1v1 direct match challenges</p>
+          <p className="text-slate-500 mt-0.5">1v1 direct match challenges</p>
         </div>
         <Link href="/compete">
           <Button className="gap-2">
@@ -272,13 +265,13 @@ export default function ChallengesPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="glass rounded-2xl p-4 text-center"
+            className="surface-card rounded-2xl p-4 text-center"
           >
             <div className="h-9 w-9 rounded-xl mx-auto mb-2 flex items-center justify-center" style={{ background: stat.color + '15' }}>
               <stat.icon className="h-4.5 w-4.5" style={{ color: stat.color }} />
             </div>
-            <div className="text-2xl font-black text-white">{stat.value}</div>
-            <div className="text-xs text-slate-400">{stat.label}</div>
+            <div className="text-2xl font-black text-slate-900">{stat.value}</div>
+            <div className="text-xs text-slate-500">{stat.label}</div>
           </motion.div>
         ))}
       </div>
@@ -298,7 +291,7 @@ export default function ChallengesPage() {
               'px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap',
               filter === tab.key
                 ? 'bg-allq-purple/15 text-allq-purple border border-allq-purple/30'
-                : 'text-slate-400 border border-white/5 hover:text-white hover:border-white/15'
+                : 'text-slate-500 bg-white border border-slate-200 hover:text-slate-900 hover:border-slate-300'
             )}
           >
             {tab.label}
@@ -323,9 +316,9 @@ export default function ChallengesPage() {
             ))}
           </AnimatePresence>
         ) : (
-          <div className="glass rounded-2xl py-16 text-center">
-            <Swords className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-300 font-semibold mb-1">No challenges yet</p>
+          <div className="surface-card rounded-2xl py-16 text-center">
+            <Swords className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-900 font-semibold mb-1">No challenges yet</p>
             <p className="text-slate-500 text-sm mb-6">
               {filter === 'incoming'
                 ? 'No one has challenged you yet.'

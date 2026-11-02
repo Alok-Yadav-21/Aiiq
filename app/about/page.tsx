@@ -1,246 +1,224 @@
 import Link from 'next/link'
-import { Navbar } from '@/components/layout/navbar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
-  Zap, Brain, Swords, Trophy, Shield, Globe, ChevronRight,
-  Target, TrendingUp, Users, Code, Database, Server
+  Brain, Swords, Trophy, Shield, Globe,
+  Target, Code, Database, Server, ChevronRight,
 } from 'lucide-react'
 import type { Metadata } from 'next'
+import { MarketingShell } from '@/components/marketing/marketing-shell'
+import { StudyObject } from '@/components/marketing/study-object'
 
 export const metadata: Metadata = {
-  title: 'About AllQ',
-  description: 'Learn about AllQ — the AI-powered competitive quiz platform built for the next generation of learners.',
+  title: 'About AIIQ',
+  description: 'Learn about AIIQ — the AI-powered competitive quiz platform built for the next generation of learners.',
 }
 
-const TECH_STACK = [
-  { name: 'Next.js 15', desc: 'App Router, Server Components, Edge Runtime', icon: Code, color: 'text-allq-cyan' },
-  { name: 'OpenAI GPT-4o', desc: 'Quiz generation, vision OCR, adaptive tutoring', icon: Brain, color: 'text-allq-purple' },
-  { name: 'WebSockets', desc: 'Real-time quiz battles with <50ms P99 latency', icon: Server, color: 'text-allq-red' },
-  { name: 'PostgreSQL + Prisma', desc: 'ACID-compliant data layer with ELO rating system', icon: Database, color: 'text-allq-green' },
-  { name: 'Stripe Connect', desc: 'PCI DSS compliant payments and instant payouts', icon: Trophy, color: 'text-allq-amber' },
-  { name: 'Redis', desc: 'Session cache, rate limiting, room state management', icon: Shield, color: 'text-allq-pink' },
+/* Champagne / rose-gold accent (matches the home page). */
+const goldText = {
+  backgroundImage: 'linear-gradient(135deg,#cda06f 0%,#9c6d44 100%)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+} as const
+
+/* Capability facts, not invented metrics. Fabricated social proof would be
+   both untrue and unnecessary — what the product does is the story. */
+const STATS = [
+  { value: '100%', label: 'From your own sources' },
+  { value: '4', label: 'Question formats' },
+  { value: 'Real-time', label: 'Live quiz rooms' },
+  { value: 'Per topic', label: 'Mastery tracking' },
+]
+
+const LOOP = [
+  { step: '01', title: 'Upload Your Material', desc: 'Drop in PDFs, photos of textbooks, or handwritten notes. Our vision model extracts every piece of text and diagram.' },
+  { step: '02', title: 'AI Generates Your Quiz', desc: 'Up to 100 questions drawn directly from your content, with difficulty calibrated to your current ELO level.' },
+  { step: '03', title: 'Practice & Track Progress', desc: 'AI narration after each quiz identifies your weak topics and suggests what to review next.' },
+  { step: '04', title: 'Compete & Climb', desc: 'Join live quiz rooms and go head-to-head with other learners. Accuracy and speed decide the ranking.' },
 ]
 
 const VALUES = [
-  {
-    icon: Brain,
-    title: 'AI That Actually Teaches',
-    desc: 'Our AI generates questions grounded in YOUR material, not generic internet facts. Every question has a linked explanation so you understand why you got it wrong.',
-  },
-  {
-    icon: Shield,
-    title: 'Zero Tolerance for Cheating',
-    desc: 'Server-side answer validation, randomised option ordering, fingerprint deduplication, and timing analysis ensure every leaderboard position is earned.',
-  },
-  {
-    icon: Globe,
-    title: 'Global, Fair Competition',
-    desc: 'Chess.com-inspired ELO rating system means you always compete against people at your skill level. Climb the ranks as you improve.',
-  },
-  {
-    icon: Target,
-    title: 'Adaptive Learning',
-    desc: 'Every quiz session identifies your weak topics and generates personalised next steps. The harder you practice, the smarter the AI gets about what you need.',
-  },
+  { icon: Brain, title: 'AI That Actually Teaches', desc: 'Questions grounded in YOUR material, not generic internet facts. Every question has a linked explanation so you understand why you got it wrong.' },
+  { icon: Shield, title: 'Zero Tolerance for Cheating', desc: 'Server-side validation, randomised option ordering, fingerprint deduplication and timing analysis ensure every leaderboard position is earned.' },
+  { icon: Globe, title: 'Global, Fair Competition', desc: 'A Chess.com-inspired ELO rating system means you always compete against people at your skill level. Climb the ranks as you improve.' },
+  { icon: Target, title: 'Adaptive Learning', desc: 'Every session identifies your weak topics and generates personalised next steps. The harder you practice, the smarter the AI gets.' },
 ]
+
+const TECH = [
+  { name: 'Next.js 15', desc: 'App Router, Server Components, Edge Runtime', icon: Code },
+  { name: 'AI Generation', desc: 'Quiz generation, vision OCR, adaptive tutoring', icon: Brain },
+  { name: 'WebSockets', desc: 'Real-time quiz battles with <50ms P99 latency', icon: Server },
+  { name: 'PostgreSQL + Prisma', desc: 'ACID-compliant data layer with ELO rating system', icon: Database },
+  { name: 'Stripe', desc: 'PCI DSS compliant subscription billing', icon: Trophy },
+  { name: 'Redis', desc: 'Session cache, rate limiting, room state management', icon: Shield },
+]
+
+const TEAM = [
+  { initials: 'AY', name: 'Alok Yadav', role: 'Founder & Lead Engineer', bio: 'Full-stack engineer obsessed with real-time systems and AI-assisted learning.' },
+  { initials: 'TM', name: 'Tech Team', role: 'Engineering', bio: 'Building the infrastructure that powers sub-50ms quiz battles across the globe.' },
+  { initials: 'ED', name: 'Education Team', role: 'Pedagogy & Content', bio: 'Designing AI prompts and learning flows grounded in proven educational research.' },
+]
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-[11px] font-semibold tracking-[0.28em] text-[#9a8260]">{children}</p>
+)
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-bg-base">
-      <Navbar />
+    <MarketingShell>
 
-      {/* Hero */}
-      <section className="pt-28 pb-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge variant="purple" size="lg" className="mb-6">
-            <Zap className="h-3.5 w-3.5" /> Our Mission
-          </Badge>
-          <h1 className="text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            Turning study time into{' '}
-            <span className="gradient-text">competitive sport</span>
-          </h1>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            AllQ was built on a simple belief: the best way to learn is to be tested, challenged,
-            and — when you excel — rewarded. We combine AI-powered study tools with real-money
-            competition to make every revision session count.
-          </p>
-        </div>
-      </section>
+        {/* ── HERO ── */}
+        <section className="px-7 sm:px-12 pt-16 sm:pt-20 pb-12 grid lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
+          <div>
+            <Label>OUR MISSION</Label>
+            <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black leading-[0.98] tracking-tight">
+              Turning your notes<br />into <span style={goldText}>real understanding</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-[14px] leading-relaxed text-[#555]">
+              AIIQ was built on a simple belief: the fastest way to learn something is to be tested on it.
+              We turn the material you already study from into questions, flashcards and notes — grounded
+              strictly in your sources — then track what you have actually mastered.
+            </p>
+          </div>
+          <div className="flex justify-center lg:justify-end">
+            <div className="flex flex-col items-center">
+              <StudyObject size={230} />
+              <div className="-mt-6 w-28 h-24 rounded-b-[12px]" style={{ background: 'linear-gradient(180deg,#fbfbfa,#eceae7)', boxShadow: '0 24px 40px -26px rgba(0,0,0,0.25)' }} />
+            </div>
+          </div>
+        </section>
 
-      {/* Stats */}
-      <section className="py-12 border-y border-white/5">
-        <div className="max-w-4xl mx-auto px-4">
+        {/* ── STATS ── */}
+        <section className="px-7 sm:px-12 py-12 border-y border-black/[0.07]">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { value: '50K+', label: 'Active Learners' },
-              { value: '2M+', label: 'Questions Generated' },
-              { value: '<50ms', label: 'Battle Latency' },
-              { value: '£200K+', label: 'Prize Money Paid' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center glass rounded-xl p-5">
-                <div className="text-3xl font-black gradient-text mb-1">{stat.value}</div>
-                <div className="text-sm text-slate-400">{stat.label}</div>
+            {STATS.map((s) => (
+              <div key={s.label} className="text-center">
+                <div className="text-3xl sm:text-4xl font-black" style={goldText}>{s.value}</div>
+                <div className="text-[12px] text-[#8b8b87] mt-1">{s.label}</div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* How AllQ Works */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <Badge variant="cyan" size="lg" className="mb-4">How It Works</Badge>
-            <h2 className="text-3xl font-black text-white">The AllQ learning loop</h2>
+        {/* ── ABOUT US (two-col) ── */}
+        <section className="px-7 sm:px-12 py-16 sm:py-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-[0.12em]">ABOUT US</h2>
+            <p className="text-sm text-[#8b8b87] mt-2">Learning in its purest form.</p>
           </div>
+          <div className="grid md:grid-cols-2 gap-8 md:gap-0 max-w-4xl mx-auto">
+            <p className="text-[13px] leading-relaxed text-[#555] text-center md:text-right md:pr-10">
+              AIIQ is an AI-powered learning platform that turns academic documents into personalised study
+              activities — generating grounded questions strictly from the material you upload, never generic facts.
+            </p>
+            <p className="text-[13px] leading-relaxed text-[#555] text-center md:text-left md:pl-10 md:border-l md:border-black/10">
+              Built on real-time infrastructure, AIIQ blends advanced AI with worldwide quiz competitions, global
+              leaderboards and per-topic mastery tracking — serious learning with a competitive edge.
+            </p>
+          </div>
+        </section>
 
-          <div className="grid md:grid-cols-2 gap-5">
-            {[
-              { step: '01', icon: '📄', title: 'Upload Your Material', desc: 'Drop in PDFs, photos of textbooks, or handwritten notes. Our GPT-4o vision model extracts every piece of text and diagram.' },
-              { step: '02', icon: '⚡', title: 'AI Generates Your Quiz', desc: 'Receive up to 100 questions drawn directly from your content, with difficulty calibrated to your current ELO level.' },
-              { step: '03', icon: '📊', title: 'Practice & Track Progress', desc: 'AI narration after each quiz identifies your weak topics and suggests what to review next. Your accuracy improves measurably over time.' },
-              { step: '04', icon: '🏆', title: 'Compete & Win', desc: 'Join live quiz rooms, battle players globally, and win real prize money. Every win increases your ELO and global rank.' },
-            ].map((item) => (
-              <div key={item.step} className="glass-hover rounded-2xl p-6 flex gap-4">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-allq-purple/20 to-allq-cyan/10 flex items-center justify-center text-2xl flex-shrink-0">
-                  {item.icon}
-                </div>
+        {/* ── THE LEARNING LOOP ── */}
+        <section className="px-7 sm:px-12 py-16 border-t border-black/[0.07]">
+          <div className="text-center mb-12">
+            <Label>HOW IT WORKS</Label>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">The AIIQ learning loop</h2>
+          </div>
+          <div className="max-w-3xl mx-auto divide-y divide-black/[0.07]">
+            {LOOP.map((s) => (
+              <div key={s.step} className="flex gap-6 sm:gap-10 items-start py-6">
+                <span className="text-2xl sm:text-3xl font-black tabular-nums" style={goldText}>{s.step}</span>
                 <div>
-                  <div className="text-xs font-bold text-allq-purple mb-1">STEP {item.step}</div>
-                  <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-base font-bold">{s.title}</h3>
+                  <p className="text-[13px] text-[#666] mt-1 leading-relaxed">{s.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Values */}
-      <section className="py-20 px-4 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
+        {/* ── VALUES ── */}
+        <section className="px-7 sm:px-12 py-16 border-t border-black/[0.07]">
           <div className="text-center mb-12">
-            <Badge variant="amber" size="lg" className="mb-4">Our Values</Badge>
-            <h2 className="text-3xl font-black text-white">What we stand for</h2>
+            <Label>OUR VALUES</Label>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">What we stand for</h2>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-5">
+          <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
             {VALUES.map((v) => (
-              <div key={v.title} className="glass rounded-2xl p-6">
-                <div className="h-11 w-11 rounded-xl bg-allq-purple/10 flex items-center justify-center mb-4">
-                  <v.icon className="h-5.5 w-5.5 text-allq-purple" />
+              <div key={v.title} className="rounded-2xl border border-black/[0.07] bg-white/70 p-6">
+                <div className="h-11 w-11 rounded-xl flex items-center justify-center mb-4" style={{ background: 'linear-gradient(135deg,#f3eadb,#e7d3b4)' }}>
+                  <v.icon className="h-5 w-5" style={{ color: '#9c6d44' }} />
                 </div>
-                <h3 className="font-bold text-white mb-2">{v.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{v.desc}</p>
+                <h3 className="font-bold mb-2">{v.title}</h3>
+                <p className="text-[13px] text-[#666] leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Technology */}
-      <section className="py-20 px-4 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
+        {/* ── TECHNOLOGY ── */}
+        <section className="px-7 sm:px-12 py-16 border-t border-black/[0.07]">
           <div className="text-center mb-12">
-            <Badge variant="purple" size="lg" className="mb-4">Technology</Badge>
-            <h2 className="text-3xl font-black text-white mb-3">Built for scale from Day 1</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
-              AllQ is engineered to the same infrastructure standards as Chess.com and Duolingo —
-              built to handle millions of concurrent quiz battles without breaking a sweat.
-            </p>
+            <Label>TECHNOLOGY</Label>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">Built for scale from Day 1</h2>
           </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {TECH_STACK.map((tech) => (
-              <div key={tech.name} className="glass rounded-xl p-5">
-                <tech.icon className={`h-5 w-5 ${tech.color} mb-3`} />
-                <h4 className="font-bold text-white text-sm mb-1">{tech.name}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{tech.desc}</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            {TECH.map((t) => (
+              <div key={t.name} className="rounded-xl border border-black/[0.07] bg-white/70 p-5">
+                <t.icon className="h-5 w-5 mb-3" style={{ color: '#b5835a' }} />
+                <h4 className="font-bold text-sm">{t.name}</h4>
+                <p className="text-[12px] text-[#777] mt-1 leading-relaxed">{t.desc}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Team */}
-      <section className="py-20 px-4 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
+        {/* ── TEAM ── */}
+        <section className="px-7 sm:px-12 py-16 border-t border-black/[0.07]">
           <div className="text-center mb-12">
-            <Badge variant="green" size="lg" className="mb-4">Team</Badge>
-            <h2 className="text-3xl font-black text-white mb-3">Who builds AllQ</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">
-              AllQ is built by a small team of engineers and educators who believe competitive
-              learning is the future of education.
-            </p>
+            <Label>THE TEAM</Label>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">Who builds AIIQ</h2>
           </div>
-
-          <div className="grid sm:grid-cols-3 gap-5">
-            {[
-              { initials: 'AY', name: 'Alok Yadav', role: 'Founder & Lead Engineer', bio: 'Full-stack engineer obsessed with real-time systems and AI-assisted learning.' },
-              { initials: 'TM', name: 'Tech Team', role: 'Engineering', bio: 'Building the infrastructure that powers sub-50ms quiz battles across the globe.' },
-              { initials: 'ED', name: 'Education Team', role: 'Pedagogy & Content', bio: 'Designing AI prompts and learning flows grounded in proven educational research.' },
-            ].map((member) => (
-              <div key={member.name} className="glass rounded-2xl p-6 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center text-white text-xl font-black mx-auto mb-4">
-                  {member.initials}
+          <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+            {TEAM.map((m) => (
+              <div key={m.name} className="rounded-2xl border border-black/[0.07] bg-white/70 p-6 text-center">
+                <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-white text-xl font-black mx-auto mb-4" style={{ background: 'linear-gradient(135deg,#cda06f,#9c6d44)' }}>
+                  {m.initials}
                 </div>
-                <h4 className="font-bold text-white mb-0.5">{member.name}</h4>
-                <p className="text-xs text-allq-purple font-semibold mb-3">{member.role}</p>
-                <p className="text-xs text-slate-400 leading-relaxed">{member.bio}</p>
+                <h4 className="font-bold mb-0.5">{m.name}</h4>
+                <p className="text-[11px] font-semibold tracking-wide mb-3" style={{ color: '#9c6d44' }}>{m.role}</p>
+                <p className="text-[12px] text-[#777] leading-relaxed">{m.bio}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="py-20 px-4 border-t border-white/5">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="glass rounded-3xl p-12 border border-allq-purple/20">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center mx-auto mb-5">
-              <Swords className="h-7 w-7 text-white" />
-            </div>
-            <h2 className="text-3xl font-black text-white mb-3">Ready to join the battle?</h2>
-            <p className="text-slate-400 mb-7">
-              Create your free account and generate your first quiz in under 2 minutes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/signup">
-                <Button size="lg" className="group">
-                  Get Started Free
-                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button size="lg" variant="secondary">View Pricing</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center">
-                <Zap className="h-4 w-4 text-white fill-white" />
+        {/* ── CTA ── */}
+        <section className="px-7 sm:px-12 py-16 border-t border-black/[0.07]">
+          <div
+            className="relative rounded-[24px] p-10 sm:p-14 text-center overflow-hidden"
+            style={{ background: 'linear-gradient(135deg,#1a1a1a 0%,#2a2218 100%)' }}
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(120% 80% at 70% 10%, rgba(205,160,111,0.18), transparent 60%)' }} />
+            <div className="relative">
+              <div className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(135deg,#cda06f,#9c6d44)' }}>
+                <Swords className="h-7 w-7 text-white" />
               </div>
-              <span className="text-lg font-black gradient-text">AllQ</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">Ready to join the battle?</h2>
+              <p className="text-[14px] text-white/70 mb-8 max-w-md mx-auto">
+                Create your free account and generate your first quiz in under two minutes.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/signup" className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-[12px] font-semibold tracking-[0.18em] text-[#1a1a1a] bg-white hover:bg-[#f3eadb] transition-colors">
+                  GET STARTED <ChevronRight className="h-4 w-4" />
+                </Link>
+                <Link href="/pricing" className="inline-flex items-center justify-center px-7 py-3 rounded-full text-[12px] font-semibold tracking-[0.18em] text-white border border-white/30 hover:bg-white/10 transition-colors">
+                  VIEW PRICING
+                </Link>
+              </div>
             </div>
-            <div className="flex items-center gap-6 text-sm text-slate-500">
-              <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-              <Link href="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/about" className="text-white transition-colors">About</Link>
-            </div>
-            <p className="text-sm text-slate-600">© 2025 AllQ · Learn It. Quiz It. Win It.</p>
           </div>
-        </div>
-      </footer>
-    </div>
+        </section>
+
+    </MarketingShell>
   )
 }

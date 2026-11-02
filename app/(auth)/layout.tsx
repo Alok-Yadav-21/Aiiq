@@ -1,25 +1,37 @@
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen hero-bg flex flex-col">
-      <div className="p-6">
-        <Link href="/" className="inline-flex items-center gap-2 group">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center shadow-neon-sm">
-            <Zap className="h-4 w-4 text-white fill-white" />
+    <div className="min-h-screen bg-canvas py-5 px-3 sm:px-6 text-ink">
+      <div className="max-w-[1120px] mx-auto sheet min-h-[calc(100vh-2.5rem)] flex flex-col">
+        {/* Chrome */}
+        <header className="flex items-center justify-between px-7 sm:px-12 pt-8">
+          <Link href="/" className="text-lg font-black tracking-[0.18em] hover:opacity-60 transition-opacity">
+            AIIQ
+          </Link>
+          <Link
+            href="/"
+            className="label-eyebrow hover:text-ink transition-colors"
+          >
+            ← Back to site
+          </Link>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 flex items-center justify-center px-6 sm:px-12 py-12">
+          {children}
+        </main>
+
+        <footer className="px-7 sm:px-12 py-6 border-t border-line-soft flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] tracking-wide text-ink-faint">
+            © 2025 AIIQ · Learn It. Quiz It. Win It.
+          </p>
+          <div className="flex items-center gap-6 label-eyebrow">
+            <Link href="/terms" className="hover:text-ink transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-ink transition-colors">Privacy</Link>
           </div>
-          <span className="text-lg font-black gradient-text">AllQ</span>
-        </Link>
+        </footer>
       </div>
-
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
-        {children}
-      </div>
-
-      <p className="text-center text-xs text-slate-600 pb-6">
-        © 2025 AllQ · Learn It. Quiz It. Win It.
-      </p>
     </div>
   )
 }

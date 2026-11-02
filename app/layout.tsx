@@ -4,33 +4,34 @@ import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AllQ — Learn It. Quiz It. Win It.',
-    template: '%s | AllQ',
+    default: 'AIIQ — Learn It. Quiz It. Win It.',
+    template: '%s | AIIQ',
   },
   description:
-    'The AI-powered global learning and competitive quiz platform. Upload your notes, generate intelligent quizzes, and compete in real-time for real prizes.',
-  keywords: ['quiz', 'AI', 'learning', 'competitive', 'education', 'study'],
-  authors: [{ name: 'AllQ Team' }],
+    'AIIQ turns your study material into intelligent quizzes, flashcards and notes — grounded strictly in what you upload. Learn it, quiz it, win it.',
+  keywords: ['AIIQ', 'AI quiz', 'study', 'flashcards', 'learning platform', 'revision', 'education'],
+  authors: [{ name: 'AIIQ' }],
   icons: {
     icon: '/favicon.ico',
   },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'AllQ — Learn It. Quiz It. Win It.',
-    description: 'AI-powered competitive quiz platform',
+    title: 'AIIQ — Learn It. Quiz It. Win It.',
+    description:
+      'Turn your documents into AI-generated quizzes, flashcards and study notes. Track mastery as you go.',
     type: 'website',
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#8b5cf6',
+  themeColor: '#e4e3e0',
   width: 'device-width',
   initialScale: 1,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className="antialiased">
         <Providers>{children}</Providers>
       </body>

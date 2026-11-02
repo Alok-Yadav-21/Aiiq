@@ -24,15 +24,15 @@ async function sendResetEmail(email: string, token: string, name: string | null)
     })
 
     await transporter.sendMail({
-      from: `AllQ <${emailFrom}>`,
+      from: `AIIQ <${emailFrom}>`,
       to: email,
-      subject: 'Reset your AllQ password',
+      subject: 'Reset your AIIQ password',
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8" />
-          <title>Reset your AllQ password</title>
+          <title>Reset your AIIQ password</title>
         </head>
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e2e8f0; margin: 0; padding: 40px 16px;">
           <div style="max-width: 480px; margin: 0 auto; background: #12121a; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden;">
@@ -40,7 +40,7 @@ async function sendResetEmail(email: string, token: string, name: string | null)
             <div style="background: linear-gradient(135deg, #8b5cf6, #06b6d4); padding: 32px; text-align: center;">
               <div style="display: inline-flex; align-items: center; gap: 8px;">
                 <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px;">⚡</div>
-                <span style="font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.5px;">AllQ</span>
+                <span style="font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.5px;">AIIQ</span>
               </div>
             </div>
             <!-- Body -->
@@ -48,7 +48,7 @@ async function sendResetEmail(email: string, token: string, name: string | null)
               <h1 style="color: white; font-size: 22px; font-weight: 800; margin: 0 0 8px;">Reset your password</h1>
               <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
                 Hi ${name || 'there'},<br /><br />
-                We received a request to reset the password for your AllQ account. Click the button below to choose a new password.
+                We received a request to reset the password for your AIIQ account. Click the button below to choose a new password.
               </p>
               <a href="${resetUrl}" style="display: block; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; text-decoration: none; text-align: center; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 15px; margin-bottom: 24px;">
                 Reset Password
@@ -64,7 +64,7 @@ async function sendResetEmail(email: string, token: string, name: string | null)
             <!-- Footer -->
             <div style="padding: 16px 32px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
               <p style="color: #475569; font-size: 12px; margin: 0;">
-                © 2025 AllQ · Learn It. Quiz It. Win It.
+                © 2025 AIIQ · Learn It. Quiz It. Win It.
               </p>
             </div>
           </div>

@@ -35,7 +35,7 @@ export function Modal({ open, onOpenChange, title, description, children, classN
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm"
+                  className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm"
                 />
               </Dialog.Overlay>
 
@@ -51,8 +51,8 @@ export function Modal({ open, onOpenChange, title, description, children, classN
                   transition={{ type: 'spring', duration: 0.35, bounce: 0.15 }}
                   className={cn(
                     'relative w-full rounded-2xl p-6',
-                    'bg-[#0f1117] border border-white/8',
-                    'shadow-[0_24px_80px_rgba(0,0,0,0.85)]',
+                    'bg-white border border-slate-200',
+                    'shadow-[0_24px_80px_rgba(15,23,42,0.18)]',
                     'max-h-[88vh] overflow-y-auto',
                     sizeMap[size],
                     className
@@ -63,12 +63,12 @@ export function Modal({ open, onOpenChange, title, description, children, classN
                   {(title || description) && (
                     <div className="mb-6 pr-8">
                       {title && (
-                        <Dialog.Title className="text-xl font-bold text-white leading-tight">
+                        <Dialog.Title className="text-xl font-bold text-slate-900 leading-tight">
                           {title}
                         </Dialog.Title>
                       )}
                       {description && (
-                        <Dialog.Description className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                        <Dialog.Description className="text-sm text-slate-500 mt-1.5 leading-relaxed">
                           {description}
                         </Dialog.Description>
                       )}
@@ -79,7 +79,7 @@ export function Modal({ open, onOpenChange, title, description, children, classN
                   {children}
 
                   {/* Close button */}
-                  <Dialog.Close className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-white hover:bg-white/8 transition-all">
+                  <Dialog.Close className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all">
                     <X className="h-4.5 w-4.5" />
                   </Dialog.Close>
                 </motion.div>

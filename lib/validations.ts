@@ -66,7 +66,6 @@ export const createRoomSchema = z.object({
   maxPlayers: z.number().int().min(2).max(50).default(10),
   questionCount: z.number().int().min(5).max(50).default(10),
   timeLimitSeconds: z.number().int().min(60).max(3600).default(300),
-  entryFee: z.number().min(0).max(1000).default(10),
   eloRequired: z.number().int().min(0).optional(),
   scheduledAt: z.string().datetime().optional(),
 })
@@ -78,7 +77,6 @@ export const createChallengeSchema = z.object({
   subjectId: z.string().cuid().optional(),
   difficulty: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT']).optional(),
   questionCount: z.number().int().min(5).max(50).default(10),
-  entryFee: z.number().min(0).max(1000).default(10),
 })
 
 // ─── Materials Upload ─────────────────────────────────────────────────────────

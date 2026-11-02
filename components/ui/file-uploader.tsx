@@ -147,15 +147,15 @@ export function FileUploader({
           'flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-10 text-center cursor-pointer transition-all',
           dragging
             ? 'border-allq-purple bg-allq-purple/10'
-            : 'border-white/15 hover:border-allq-purple/50 hover:bg-white/[0.03]'
+            : 'border-slate-300 bg-slate-50 hover:border-allq-purple/50 hover:bg-purple-50/40'
         )}
       >
         <div className="h-12 w-12 rounded-xl bg-allq-purple/15 flex items-center justify-center">
           <UploadCloud className="h-6 w-6 text-allq-purple" />
         </div>
         <div>
-          <p className="text-white font-semibold">Drop files here or click to upload</p>
-          <p className="text-xs text-slate-400 mt-1">PDF, Word, PowerPoint, text & images — up to 25MB each</p>
+          <p className="text-slate-900 font-semibold">Drop files here or click to upload</p>
+          <p className="text-xs text-slate-500 mt-1">PDF, Word, PowerPoint, text & images — up to 25MB each</p>
         </div>
         <input
           ref={inputRef}
@@ -175,13 +175,13 @@ export function FileUploader({
               return (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2.5"
+                  className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5"
                 >
-                  <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-                    <Icon className="h-4 w-4 text-slate-300" />
+                  <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Icon className="h-4 w-4 text-slate-500" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-white truncate">{item.file.name}</p>
+                    <p className="text-sm text-slate-900 truncate">{item.file.name}</p>
                     <p className={cn(
                       'text-xs truncate',
                       item.status === 'error' ? 'text-allq-red' : 'text-slate-500'
@@ -197,7 +197,7 @@ export function FileUploader({
                     {item.status === 'uploading' && <Loader2 className="h-4 w-4 text-allq-purple animate-spin" />}
                     {item.status === 'done' && (
                       <span className="h-6 w-6 rounded-full bg-allq-green/15 flex items-center justify-center">
-                        <Check className="h-3.5 w-3.5 text-allq-green" />
+                        <Check className="h-3.5 w-3.5 text-emerald-600" />
                       </span>
                     )}
                     {item.status === 'error' && (

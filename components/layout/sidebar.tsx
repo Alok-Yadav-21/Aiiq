@@ -2,17 +2,18 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
 import {
   LayoutDashboard, BookOpen, Swords, Settings, Trophy,
-  TrendingUp, Plus, ChevronRight, Zap, Crown, Target, Bell
+  TrendingUp, Plus, Target, Bell, Lock, Flame,
 } from 'lucide-react'
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/subjects', icon: BookOpen, label: 'My Subjects' },
-  { href: '/compete', icon: Swords, label: 'Compete', badge: 'LIVE' },
+  { href: '/subjects', icon: BookOpen, label: 'My subjects' },
+  { href: '/compete', icon: Swords, label: 'Compete' },
   { href: '/challenges', icon: Target, label: 'Challenges', starterOnly: true },
   { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
   { href: '/analytics', icon: TrendingUp, label: 'Analytics', proOnly: true },
@@ -25,24 +26,31 @@ const bottomItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { user, isStarter, isPro } = useAuth()
+  const { isStarter, isPro } = useAuth()
+
+  // Real study stats — the sidebar used to show a frozen ELO bar.
+  const { data } = useQuery({
+    queryKey: ['stats'],
+    queryFn: async () => {
+      const res = await fetch('/api/stats')
+      if (!res.ok) return null
+      return res.json().then((j) => j.data)
+    },
+    staleTime: 60_000,
+  })
+  const stats = data?.stats
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-white/5 bg-bg-surface pt-16">
+    <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-line-warm bg-white pt-16">
       <div className="flex flex-col h-full p-4">
-        {/* Quick Actions */}
-        <div className="mb-4">
-          <Link
-            href="/subjects/new"
-            className="flex items-center gap-2 glass-hover rounded-xl px-3 py-2.5 text-sm font-medium text-allq-purple border border-allq-purple/20 hover:border-allq-purple/40 transition-all group"
-          >
-            <Plus className="h-4 w-4" />
-            New Subject
-            <ChevronRight className="h-3.5 w-3.5 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-          </Link>
-        </div>
+        <Link
+          href="/subjects/new"
+          className="flex items-center gap-2 btn-grad rounded-xl px-3 py-2.5 text-sm font-semibold mb-5 shadow-sm"
+        >
+          <Plus className="h-4 w-4" />
+          New subject
+        </Link>
 
-        {/* Nav Items */}
         <nav className="flex-1 space-y-0.5">
           {navItems.map((item) => {
             const isActive = pathname?.startsWith(item.href)
@@ -51,80 +59,69 @@ export function Sidebar() {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={isLocked ? '/pricing' : item.href}
                 className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative',
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors',
                   isActive
-                    ? 'bg-allq-purple/10 text-allq-purple border border-allq-purple/20'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5',
-                  isLocked && 'opacity-60'
+                    ? 'bg-gold-50 text-gold-700 border border-gold-200'
+                    : 'text-ink-muted hover:text-ink hover:bg-black/[0.035] border border-transparent'
                 )}
               >
-                <item.icon className="h-4.5 w-4.5 flex-shrink-0" />
+                <item.icon className="h-4 w-4 flex-shrink-0" />
                 <span className="flex-1">{item.label}</span>
-                {item.badge && (
-                  <span className="text-[9px] font-bold bg-allq-red/20 text-allq-red border border-allq-red/30 px-1.5 py-0.5 rounded-full">
-                    {item.badge}
-                  </span>
-                )}
-                {isLocked && (
-                  <Crown className="h-3.5 w-3.5 text-allq-amber opacity-70" />
-                )}
+                {isLocked && <Lock className="h-3.5 w-3.5 text-ink-faint" />}
               </Link>
             )
           })}
         </nav>
 
-        {/* Upgrade Banner */}
+        {/* Study streak — derived from real quiz activity */}
+        {stats && (
+          <div className="mt-4 surface-sunken p-3.5">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase text-ink-muted">
+                <Flame className="h-3.5 w-3.5 text-gold-deep" /> Streak
+              </span>
+              <span className="text-sm font-bold text-ink">
+                {stats.currentStreak} {stats.currentStreak === 1 ? 'day' : 'days'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-ink-muted">
+              <span>{stats.questionsAnswered} answered</span>
+              <span className="font-semibold text-ink-secondary">{stats.accuracy}% correct</span>
+            </div>
+          </div>
+        )}
+
         {!isPro && (
-          <Link href="/pricing" className="block mb-3">
-            <div className="glass rounded-xl p-3 border border-allq-purple/20 bg-gradient-to-br from-allq-purple/10 to-allq-cyan/5 hover:border-allq-purple/40 transition-all group">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-allq-purple" />
-                <span className="text-xs font-bold text-white">Upgrade to Pro</span>
-              </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed mb-2">
-                Unlock real money competitions, unlimited subjects, and advanced AI.
+          <Link href="/pricing" className="block mt-3">
+            <div className="rounded-xl p-3.5 border border-gold-200 bg-gold-50 hover:border-gold-300 transition-colors">
+              <p className="text-xs font-bold text-ink mb-1.5">Upgrade to Pro</p>
+              <p className="text-[11px] text-ink-muted leading-relaxed mb-2">
+                Unlimited subjects, longer quizzes and full analytics.
               </p>
-              <div className="text-xs font-bold gradient-text">£14.99/month →</div>
+              <span className="text-xs font-bold gradient-text">See plans →</span>
             </div>
           </Link>
         )}
 
-        {/* Bottom Nav */}
-        <div className="space-y-0.5">
+        <div className="space-y-0.5 mt-3 pt-3 border-t border-line-soft">
           {bottomItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors',
                 pathname?.startsWith(item.href)
-                  ? 'text-allq-purple'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'text-gold-700 bg-gold-50'
+                  : 'text-ink-muted hover:text-ink hover:bg-black/[0.035]'
               )}
             >
-              <item.icon className="h-4.5 w-4.5" />
+              <item.icon className="h-4 w-4" />
               {item.label}
             </Link>
           ))}
         </div>
-
-        {/* User ELO */}
-        {user?.profile && (
-          <div className="mt-3 glass rounded-xl p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-400">ELO Rating</span>
-              <span className="text-sm font-bold text-white">{user.profile.eloRating}</span>
-            </div>
-            <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-allq-purple to-allq-cyan rounded-full transition-all"
-                style={{ width: `${Math.min(100, (user.profile.eloRating / 2200) * 100)}%` }}
-              />
-            </div>
-          </div>
-        )}
       </div>
     </aside>
   )

@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Mail, ArrowLeft, Zap, CheckCircle } from 'lucide-react'
 
 const schema = z.object({
@@ -48,75 +47,54 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-md"
-    >
-      {/* Logo */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-allq-purple to-allq-cyan shadow-neon-purple mb-4">
-          <Zap className="h-8 w-8 text-white fill-white" />
-        </div>
-        <h1 className="text-3xl font-black text-white mb-2">Reset your password</h1>
-        <p className="text-slate-400">
-          {success
-            ? 'Check your inbox for the reset link'
-            : "Enter your email and we'll send you a reset link"}
-        </p>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+      <div className="mb-7">
+        <p className="label-eyebrow mb-3">Password reset</p>
+        <h1 className="display text-2xl mb-1.5">Reset your password</h1>
+        <p className="text-sm text-ink-muted">{success ? 'Check your inbox for the reset link' : "Enter your email and we'll send you a reset link"}</p>
       </div>
 
-      <div className="glass rounded-2xl p-8">
+      <div className="surface-card p-7 sm:p-8">
         {success ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-4"
-          >
-            <div className="h-16 w-16 rounded-full bg-allq-green/10 border border-allq-green/30 flex items-center justify-center mx-auto mb-5">
-              <CheckCircle className="h-8 w-8 text-allq-green" />
+          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-2">
+            <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-5">
+              <CheckCircle className="h-8 w-8 text-emerald-500" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Check your inbox</h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              We sent a password reset link to{' '}
-              <span className="text-white font-semibold">{submittedEmail}</span>.
-              The link expires in 1 hour.
+            <h2 className="text-lg font-bold text-slate-900 mb-2">Check your inbox</h2>
+            <p className="text-slate-500 text-sm leading-relaxed">
+              We sent a password reset link to <span className="text-slate-900 font-semibold">{submittedEmail}</span>. The link expires in 1 hour.
             </p>
-            <p className="text-slate-500 text-xs mt-4">
-              Didn't get it? Check your spam folder or{' '}
-              <button
-                onClick={() => setSuccess(false)}
-                className="text-allq-purple hover:underline"
-              >
-                try again
-              </button>
-              .
+            <p className="text-slate-400 text-xs mt-4">
+              Didn&apos;t get it? Check your spam folder or{' '}
+              <button onClick={() => setSuccess(false)} className="text-gold-700 hover:underline font-medium">try again</button>.
             </p>
 
             {devResetUrl && (
-              <div className="mt-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-left">
-                <p className="text-xs font-bold text-amber-400 mb-2">Dev Mode — No SMTP configured</p>
-                <p className="text-xs text-slate-400 mb-3">Click the link below to reset your password:</p>
-                <a
-                  href={devResetUrl}
-                  className="text-xs text-allq-purple break-all hover:underline leading-relaxed"
-                >
-                  {devResetUrl}
-                </a>
+              <div className="mt-5 p-4 rounded-xl bg-amber-50 border border-amber-200 text-left">
+                <p className="text-xs font-bold text-amber-600 mb-2">Dev Mode — No SMTP configured</p>
+                <p className="text-xs text-slate-500 mb-3">Click the link below to reset your password:</p>
+                <a href={devResetUrl} className="text-xs text-allq-purple break-all hover:underline leading-relaxed">{devResetUrl}</a>
               </div>
             )}
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <Input
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              leftIcon={<Mail className="h-4 w-4" />}
-              error={errors.email?.message}
-              autoComplete="email"
-              {...register('email')}
-            />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="fp-email" className="text-sm font-medium text-ink-secondary">Email address</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" aria-hidden />
+                <input
+                  id="fp-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  aria-invalid={!!errors.email}
+                  className="input-light w-full rounded-xl pl-9 pr-4 py-2.5 text-sm"
+                  {...register('email')}
+                />
+              </div>
+              {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
+            </div>
 
             <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>
               Send Reset Link
@@ -126,12 +104,8 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="mt-6 text-center">
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Sign In
+        <Link href="/login" className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink transition-colors">
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to Sign In
         </Link>
       </div>
     </motion.div>

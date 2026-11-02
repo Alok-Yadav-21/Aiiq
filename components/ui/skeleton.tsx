@@ -8,7 +8,7 @@ export function Skeleton({ className, variant = 'default', ...props }: SkeletonP
   return (
     <div
       className={cn(
-        'skeleton',
+        'skeleton-light',
         variant === 'card' && 'h-48 w-full rounded-2xl',
         variant === 'text' && 'h-4 w-full rounded',
         variant === 'avatar' && 'h-10 w-10 rounded-full',
@@ -22,7 +22,7 @@ export function Skeleton({ className, variant = 'default', ...props }: SkeletonP
 
 export function SubjectCardSkeleton() {
   return (
-    <div className="glass rounded-2xl p-5 flex flex-col gap-3">
+    <div className="surface-card rounded-2xl p-5 flex flex-col gap-3">
       <Skeleton className="h-40 w-full rounded-xl" />
       <Skeleton variant="text" className="w-3/4" />
       <Skeleton variant="text" className="w-full" />
@@ -37,7 +37,7 @@ export function SubjectCardSkeleton() {
 
 export function RoomCardSkeleton() {
   return (
-    <div className="glass rounded-2xl p-5 flex flex-col gap-3">
+    <div className="surface-card rounded-2xl p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <Skeleton variant="text" className="w-1/2" />
         <Skeleton className="h-6 w-16 rounded-full" />

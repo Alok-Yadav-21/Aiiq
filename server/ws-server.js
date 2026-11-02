@@ -1,5 +1,5 @@
 /**
- * AllQ WebSocket Server
+ * AIIQ WebSocket Server
  * Real-time quiz battle engine
  * Runs on port 3001 alongside Next.js (port 3000)
  */
@@ -98,7 +98,6 @@ function endQuiz(io, roomId) {
       score: player.score,
       correctAnswers: player.correctAnswers || 0,
       totalQuestions: room.questions.length,
-      prizeWon: 0, // Would be calculated based on prize pool in production
     }))
     .sort((a, b) => b.score - a.score)
     .map((r, i) => ({ ...r, rank: i + 1 }))
@@ -371,7 +370,7 @@ io.on('connection', (socket) => {
 })
 
 httpServer.listen(PORT, () => {
-  console.log(`🔌 AllQ WebSocket server running on port ${PORT}`)
+  console.log(`🔌 AIIQ WebSocket server running on port ${PORT}`)
 })
 
 module.exports = { io, httpServer }

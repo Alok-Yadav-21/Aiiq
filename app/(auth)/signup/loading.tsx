@@ -15,7 +15,7 @@ export default function SignupLoading() {
         </div>
         <div className="grid grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="glass rounded-xl p-4 text-center">
+            <div key={i} className="surface-card p-4 text-center">
               <div className="skeleton h-8 w-16 rounded mx-auto mb-1" />
               <div className="skeleton h-3 w-12 rounded mx-auto" />
             </div>
@@ -29,15 +29,15 @@ export default function SignupLoading() {
           <div className="skeleton h-7 w-48 rounded mb-2" />
           <div className="skeleton h-4 w-36 rounded" />
         </div>
-        <div className="glass rounded-2xl p-8">
+        <div className="surface-card rounded-2xl p-8">
           <div className="space-y-5">
             {[...Array(3)].map((_, i) => (
               <div key={i}>
-                <div className="skeleton h-4 w-20 rounded mb-1.5" />
-                <div className="skeleton h-12 w-full rounded-xl" />
+                <div className="skeleton-light h-4 w-20 rounded mb-1.5" />
+                <div className="skeleton-light h-12 w-full rounded-xl" />
               </div>
             ))}
-            <div className="skeleton h-12 w-full rounded-xl" />
+            <div className="skeleton-light h-12 w-full rounded-xl" />
           </div>
         </div>
       </div>

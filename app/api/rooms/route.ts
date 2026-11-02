@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
       data: {
         ...parsed.data,
         hostId: payload.sub,
-        entryFee: parsed.data.entryFee,
+        // Competition on AIIQ is skill-based: no entry fees, no prize pools.
+        entryFee: 0,
         prizePool: 0,
         title: parsed.data.title || `${subject.title} Battle`,
       },

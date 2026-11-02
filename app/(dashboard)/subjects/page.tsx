@@ -92,12 +92,12 @@ export default function SubjectsPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl">
+    <div className="px-5 py-7 lg:px-9 lg:py-9 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-black text-white">Subjects</h1>
-          <p className="text-slate-400 mt-0.5">Browse, create, and master any subject</p>
+          <h1 className="text-3xl font-black text-slate-900">Subjects</h1>
+          <p className="text-slate-500 mt-0.5">Browse, create, and master any subject</p>
         </div>
         <Button onClick={() => setShowCreate(true)}>
           <Plus className="h-4 w-4" /> New Subject
@@ -113,8 +113,8 @@ export default function SubjectsPage() {
             className={cn(
               'px-5 py-2 rounded-xl text-sm font-semibold transition-all',
               tab === t
-                ? 'bg-allq-purple/10 text-allq-purple border border-allq-purple/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                ? 'bg-purple-50 text-allq-purple border border-purple-200'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
             )}
           >
             {t === 'explore' ? (
@@ -136,7 +136,7 @@ export default function SubjectsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search subjects..."
-              className="input-glass w-full pl-9 pr-4 py-2.5 text-sm rounded-xl"
+              className="input-light w-full pl-9 pr-4 py-2.5 text-sm rounded-xl"
             />
           </div>
 
@@ -149,7 +149,7 @@ export default function SubjectsPage() {
                   'px-3 py-1.5 rounded-lg text-xs font-medium transition-all border',
                   difficulty === d
                     ? 'bg-allq-purple/15 text-allq-purple border-allq-purple/30'
-                    : 'text-slate-400 hover:text-white border-white/5 hover:border-white/15'
+                    : 'text-slate-500 hover:text-slate-900 bg-white border-slate-200 hover:border-slate-300'
                 )}
               >
                 {d === 'All' ? 'All Levels' : d.charAt(0) + d.slice(1).toLowerCase()}
@@ -167,8 +167,8 @@ export default function SubjectsPage() {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-medium transition-all border whitespace-nowrap flex-shrink-0',
                 category === cat
-                  ? 'bg-allq-cyan/15 text-allq-cyan border-allq-cyan/30'
-                  : 'text-slate-400 hover:text-white border-white/5 hover:border-white/15'
+                  ? 'bg-allq-cyan/15 text-cyan-700 border-allq-cyan/30'
+                  : 'text-slate-500 hover:text-slate-900 bg-white border-slate-200 hover:border-slate-300'
               )}
             >
               {cat === 'All' ? 'All Categories' : cat.charAt(0) + cat.slice(1).toLowerCase()}
@@ -184,9 +184,9 @@ export default function SubjectsPage() {
         </div>
       ) : data?.items?.length === 0 ? (
         <div className="text-center py-20">
-          <Sparkles className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-white font-bold text-lg mb-2">No subjects found</h3>
-          <p className="text-slate-400 mb-6">
+          <Sparkles className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-slate-900 font-bold text-lg mb-2">No subjects found</h3>
+          <p className="text-slate-500 mb-6">
             {tab === 'mine' ? 'Create your first subject to get started' : 'Try different filters'}
           </p>
           {tab === 'mine' && (
@@ -205,7 +205,7 @@ export default function SubjectsPage() {
               transition={{ delay: i * 0.04 }}
             >
               <Link href={`/subjects/${subject.id}`}>
-                <div className="glass-hover rounded-2xl overflow-hidden cursor-pointer group h-full flex flex-col">
+                <div className="surface-card-hover rounded-2xl overflow-hidden cursor-pointer group h-full flex flex-col">
                   {/* Color Banner */}
                   <div className="h-2 bg-gradient-to-r from-allq-purple to-allq-cyan" />
 
@@ -222,20 +222,20 @@ export default function SubjectsPage() {
                       </div>
                     </div>
 
-                    <h3 className="font-bold text-white mb-1.5 group-hover:text-allq-purple transition-colors line-clamp-2 flex-1">
+                    <h3 className="font-bold text-slate-900 mb-1.5 group-hover:text-allq-purple transition-colors line-clamp-2 flex-1">
                       {subject.title}
                     </h3>
-                    <p className="text-xs text-slate-400 line-clamp-2 mb-4">{subject.description}</p>
+                    <p className="text-xs text-slate-500 line-clamp-2 mb-4">{subject.description}</p>
 
                     <div className="flex flex-wrap gap-1 mb-4">
                       {subject.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-[10px] bg-white/5 text-slate-400 px-2 py-0.5 rounded-full">
+                        <span key={tag} className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">
                           {tag}
                         </span>
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-slate-500 border-t border-white/5 pt-3">
+                    <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-3">
                       <span className="flex items-center gap-1">
                         <Users className="h-3.5 w-3.5" /> {subject.enrolledCount}
                       </span>
@@ -257,43 +257,43 @@ export default function SubjectsPage() {
         <form onSubmit={handleSubmit(onCreateSubmit)} className="space-y-4">
           <Input label="Subject Title" placeholder="e.g., Advanced JavaScript" error={errors.title?.message} {...register('title')} />
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-300">Description <span className="text-slate-500 font-normal">(optional)</span></label>
+            <label className="text-sm font-medium text-slate-700">Description <span className="text-slate-500 font-normal">(optional)</span></label>
             <textarea
               {...register('description')}
               placeholder="Optional — add a short description, or skip it and just upload materials."
-              className="input-glass w-full rounded-xl px-4 py-3 text-sm resize-none h-24"
+              className="input-light w-full rounded-xl px-4 py-3 text-sm resize-none h-24"
             />
             {errors.description && <p className="text-xs text-allq-red">{errors.description.message}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300">Category</label>
-              <select {...register('category')} className="input-glass w-full rounded-xl px-4 py-3 text-sm">
+              <label className="text-sm font-medium text-slate-700">Category</label>
+              <select {...register('category')} className="input-light w-full rounded-xl px-4 py-3 text-sm">
                 {['MATHEMATICS', 'SCIENCE', 'HISTORY', 'GEOGRAPHY', 'LANGUAGES', 'TECHNOLOGY', 'ARTS', 'BUSINESS', 'MEDICINE', 'LAW', 'OTHER'].map((c) => (
-                  <option key={c} value={c} className="bg-bg-surface">{c}</option>
+                  <option key={c} value={c} className="bg-white">{c}</option>
                 ))}
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300">Difficulty</label>
-              <select {...register('difficulty')} className="input-glass w-full rounded-xl px-4 py-3 text-sm">
+              <label className="text-sm font-medium text-slate-700">Difficulty</label>
+              <select {...register('difficulty')} className="input-light w-full rounded-xl px-4 py-3 text-sm">
                 {['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT'].map((d) => (
-                  <option key={d} value={d} className="bg-bg-surface">{d}</option>
+                  <option key={d} value={d} className="bg-white">{d}</option>
                 ))}
               </select>
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-300">Tags</label>
+            <label className="text-sm font-medium text-slate-700">Tags</label>
             <div className="flex gap-2">
               <input
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag() } }}
                 placeholder="Add a tag..."
-                className="input-glass flex-1 rounded-xl px-4 py-2.5 text-sm"
+                className="input-light flex-1 rounded-xl px-4 py-2.5 text-sm"
               />
               <Button type="button" variant="secondary" size="sm" onClick={addTag}>Add</Button>
             </div>
@@ -315,7 +315,7 @@ export default function SubjectsPage() {
           <div className="flex items-center justify-between pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" {...register('isPublic')} className="w-4 h-4 accent-allq-purple" />
-              <span className="text-sm text-slate-300">Make subject public</span>
+              <span className="text-sm text-slate-700">Make subject public</span>
             </label>
             <div className="flex gap-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setShowCreate(false)}>Cancel</Button>

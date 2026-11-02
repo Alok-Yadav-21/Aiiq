@@ -13,7 +13,7 @@ import {
   Users, Trophy, Clock, CheckCircle, Loader2, Zap,
   ChevronLeft, Crown, Target, Flame
 } from 'lucide-react'
-import { cn, formatCurrency, formatDuration, calculateScore, getDifficultyMultiplier } from '@/lib/utils'
+import { cn, formatDuration, calculateScore, getDifficultyMultiplier } from '@/lib/utils'
 import { io, Socket } from 'socket.io-client'
 
 type RoomPhase = 'lobby' | 'countdown' | 'question' | 'reveal' | 'results'
@@ -43,7 +43,6 @@ interface RoomResult {
   rank: number
   score: number
   correctAnswers: number
-  prizeWon: number
   name: string | null
 }
 
@@ -227,14 +226,9 @@ export default function QuizRoomPage() {
             <div className="text-6xl mb-4">
               {myResult?.rank === 1 ? '🏆' : myResult?.rank === 2 ? '🥈' : myResult?.rank === 3 ? '🥉' : '🎯'}
             </div>
-            <h2 className="text-3xl font-black text-white mb-1">
+            <h2 className="text-3xl font-black text-slate-900 mb-1">
               {myResult?.rank === 1 ? 'You Won!' : `Rank #${myResult?.rank || '?'}`}
             </h2>
-            {myResult && myResult.prizeWon > 0 && (
-              <p className="text-allq-green font-bold text-xl">
-                +{formatCurrency(myResult.prizeWon)} earned!
-              </p>
-            )}
           </div>
 
           <div className="space-y-3 mb-8">
@@ -245,13 +239,13 @@ export default function QuizRoomPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
                 className={cn(
-                  'glass rounded-xl p-4 flex items-center gap-4',
+                  'surface-card rounded-xl p-4 flex items-center gap-4',
                   result.userId === user?.id && 'border border-allq-purple/30 bg-allq-purple/5'
                 )}
               >
                 <span className={cn(
                   'text-2xl font-black w-8 text-center',
-                  i === 0 ? 'text-allq-amber' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-amber-700' : 'text-slate-500'
+                  i === 0 ? 'text-allq-amber' : i === 1 ? 'text-slate-700' : i === 2 ? 'text-amber-700' : 'text-slate-500'
                 )}>
                   {i < 3 ? ['🥇', '🥈', '🥉'][i] : `#${i + 1}`}
                 </span>
@@ -259,17 +253,14 @@ export default function QuizRoomPage() {
                   {(result.name || 'U')[0].toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-white">
+                  <p className="font-bold text-slate-900">
                     {result.name || 'Anonymous'}
                     {result.userId === user?.id && ' (You)'}
                   </p>
-                  <p className="text-xs text-slate-400">{result.correctAnswers}/{totalQuestions} correct</p>
+                  <p className="text-xs text-slate-500">{result.correctAnswers}/{totalQuestions} correct</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-white">{result.score} pts</p>
-                  {result.prizeWon > 0 && (
-                    <p className="text-xs text-allq-green font-bold">+{formatCurrency(result.prizeWon)}</p>
-                  )}
+                  <p className="font-bold text-slate-900">{result.score} pts</p>
                 </div>
               </motion.div>
             ))}
@@ -308,7 +299,7 @@ export default function QuizRoomPage() {
         </div>
 
         {/* Timer bar */}
-        <div className="h-2 bg-white/5 rounded-full mb-6 overflow-hidden">
+        <div className="h-2 bg-slate-100 rounded-full mb-6 overflow-hidden">
           <motion.div
             className={cn('h-full rounded-full', isDanger ? 'bg-allq-red' : 'bg-gradient-to-r from-allq-purple to-allq-cyan')}
             style={{ width: `${timerPct}%` }}
@@ -317,12 +308,12 @@ export default function QuizRoomPage() {
         </div>
 
         {/* Question */}
-        <div className="glass rounded-2xl p-6 mb-5">
+        <div className="surface-card rounded-2xl p-6 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Badge variant="purple" size="sm">{currentQuestion.difficulty}</Badge>
             {currentQuestion.topicTag && <Badge variant="default" size="sm">{currentQuestion.topicTag}</Badge>}
           </div>
-          <p className="text-xl lg:text-2xl font-bold text-white leading-relaxed">
+          <p className="text-xl lg:text-2xl font-bold text-slate-900 leading-relaxed">
             {currentQuestion.questionText}
           </p>
         </div>
@@ -344,10 +335,10 @@ export default function QuizRoomPage() {
                 onClick={() => !answerSubmitted && submitAnswer(option)}
                 disabled={answerSubmitted}
                 className={cn(
-                  'w-full text-left glass rounded-xl px-5 py-4 border transition-all duration-200',
+                  'w-full text-left bg-white rounded-xl px-5 py-4 border transition-all duration-200',
                   isSelected
-                    ? 'border-allq-purple/60 bg-allq-purple/15 shadow-neon-sm'
-                    : 'border-white/5 hover:border-allq-purple/30 hover:bg-allq-purple/5',
+                    ? 'border-allq-purple/60 bg-allq-purple/15 shadow-sm'
+                    : 'border-slate-200 hover:border-allq-purple/30 hover:bg-allq-purple/5',
                   answerSubmitted && !isSelected && 'opacity-50',
                   'disabled:cursor-not-allowed'
                 )}
@@ -355,11 +346,11 @@ export default function QuizRoomPage() {
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     'h-8 w-8 rounded-lg font-bold text-sm flex items-center justify-center flex-shrink-0',
-                    isSelected ? 'bg-allq-purple text-white' : 'bg-white/5 text-slate-400'
+                    isSelected ? 'bg-allq-purple text-white' : 'bg-slate-100 text-slate-500'
                   )}>
                     {letters[i]}
                   </div>
-                  <span className={cn('font-medium', isSelected ? 'text-white' : 'text-slate-300')}>
+                  <span className={cn('font-medium', isSelected ? 'text-slate-900' : 'text-slate-700')}>
                     {option}
                   </span>
                   {isSelected && (
@@ -379,7 +370,7 @@ export default function QuizRoomPage() {
                 onKeyDown={(e) => { if (e.key === 'Enter' && selectedAnswer) submitAnswer(selectedAnswer) }}
                 placeholder="Type your answer and press Enter..."
                 disabled={answerSubmitted}
-                className="input-glass w-full rounded-xl px-5 py-4 text-base"
+                className="input-light w-full rounded-xl px-5 py-4 text-base"
               />
               {!answerSubmitted && selectedAnswer && (
                 <Button
@@ -398,7 +389,7 @@ export default function QuizRoomPage() {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center text-sm text-allq-green mt-4"
+            className="text-center text-sm text-emerald-600 mt-4"
           >
             <CheckCircle className="h-4 w-4 inline mr-1" />
             Answer submitted! Waiting for others...
@@ -409,8 +400,8 @@ export default function QuizRoomPage() {
         <div className="mt-5 flex items-center gap-3 overflow-x-auto pb-1">
           {players.sort((a, b) => b.score - a.score).map((p) => (
             <div key={p.userId} className={cn(
-              'flex-shrink-0 text-center glass rounded-xl p-2.5 min-w-[72px] border',
-              p.userId === user?.id ? 'border-allq-purple/30' : 'border-white/5'
+              'flex-shrink-0 text-center surface-card rounded-xl p-2.5 min-w-[72px] border',
+              p.userId === user?.id ? 'border-allq-purple/30' : 'border-slate-200'
             )}>
               <div className={cn(
                 'h-7 w-7 rounded-lg mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold',
@@ -418,8 +409,8 @@ export default function QuizRoomPage() {
               )}>
                 {p.answered ? '✓' : (p.name || 'U')[0].toUpperCase()}
               </div>
-              <p className="text-[10px] text-slate-400 truncate max-w-[64px]">{p.name?.split(' ')[0] || 'User'}</p>
-              <p className="text-xs font-bold text-white">{p.score}</p>
+              <p className="text-[10px] text-slate-500 truncate max-w-[64px]">{p.name?.split(' ')[0] || 'User'}</p>
+              <p className="text-xs font-bold text-slate-900">{p.score}</p>
             </div>
           ))}
         </div>
@@ -440,7 +431,7 @@ export default function QuizRoomPage() {
           >
             {countdown}
           </motion.div>
-          <p className="text-xl text-slate-400">Battle starting...</p>
+          <p className="text-xl text-slate-500">Battle starting...</p>
         </motion.div>
       </div>
     )
@@ -449,33 +440,33 @@ export default function QuizRoomPage() {
   /* ─── LOBBY PHASE ─── */
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white mb-6 transition-colors">
+      <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 mb-6 transition-colors">
         <ChevronLeft className="h-4 w-4" /> Back to Lobby
       </button>
 
       {room && (
         <>
-          <div className="glass rounded-2xl p-6 mb-6">
+          <div className="surface-card rounded-2xl p-6 mb-6">
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="green" size="sm">Waiting for players</Badge>
                   <Badge variant="default" size="sm">{room.subject?.title}</Badge>
                 </div>
-                <h1 className="text-2xl font-black text-white">{room.title}</h1>
-                <p className="text-slate-400 mt-1">
+                <h1 className="text-2xl font-black text-slate-900">{room.title}</h1>
+                <p className="text-slate-500 mt-1">
                   {room._count?.players}/{room.maxPlayers} players · {room.questionCount} questions · {formatDuration(room.timeLimitSeconds)}
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-black text-allq-amber">{formatCurrency(Number(room.prizePool))}</div>
-                <div className="text-xs text-slate-400">Prize Pool</div>
+                <div className="text-2xl font-black text-ink">{room.questionCount}</div>
+                <div className="text-xs text-ink-muted">Questions</div>
               </div>
             </div>
           </div>
 
           {/* Players */}
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Users className="h-5 w-5 text-allq-cyan" />
             Players ({players.length}/{room.maxPlayers})
           </h2>
@@ -483,32 +474,32 @@ export default function QuizRoomPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
             {players.map((player) => (
               <div key={player.userId} className={cn(
-                'glass rounded-xl p-4 flex items-center gap-3 border',
-                player.userId === user?.id ? 'border-allq-purple/30' : 'border-white/5'
+                'surface-card rounded-xl p-4 flex items-center gap-3 border',
+                player.userId === user?.id ? 'border-allq-purple/30' : 'border-slate-200'
               )}>
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center text-white font-bold flex-shrink-0">
                   {(player.name || 'U')[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
                     {player.name || 'Anonymous'}
                     {player.userId === user?.id && <span className="text-allq-purple"> (You)</span>}
                   </p>
-                  <p className="text-xs text-slate-400">ELO: {player.eloRating || 1200}</p>
+                  <p className="text-xs text-slate-500">ELO: {player.eloRating || 1200}</p>
                 </div>
                 {player.isReady && (
-                  <CheckCircle className="h-4.5 w-4.5 text-allq-green flex-shrink-0" />
+                  <CheckCircle className="h-4.5 w-4.5 text-emerald-600 flex-shrink-0" />
                 )}
               </div>
             ))}
 
             {/* Empty slots */}
             {[...Array(Math.max(0, room.maxPlayers - players.length))].slice(0, 6 - players.length).map((_, i) => (
-              <div key={`empty-${i}`} className="glass rounded-xl p-4 flex items-center gap-3 border border-dashed border-white/10">
-                <div className="h-10 w-10 rounded-xl bg-white/3 flex items-center justify-center">
-                  <Users className="h-4.5 w-4.5 text-slate-600" />
+              <div key={`empty-${i}`} className="rounded-xl p-4 flex items-center gap-3 border border-dashed border-slate-300 bg-slate-50">
+                <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                  <Users className="h-4.5 w-4.5 text-slate-400" />
                 </div>
-                <p className="text-sm text-slate-600">Waiting...</p>
+                <p className="text-sm text-slate-400">Waiting...</p>
               </div>
             ))}
           </div>
