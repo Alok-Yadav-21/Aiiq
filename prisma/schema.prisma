@@ -346,6 +346,9 @@ model QuizSession {
   subjectId       String
   userId          String
   questionCount   Int
+  // The exact questions drawn for this session, in presentation order. Without
+  // this a session cannot be reloaded, so a refresh mid-quiz lost everything.
+  questionIds     String[]
   durationSeconds Int
   score           Int?
   maxScore        Int?

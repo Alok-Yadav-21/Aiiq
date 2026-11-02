@@ -7,7 +7,6 @@ import { apiResponse, apiError } from '@/lib/utils'
 const createSchema = z.object({
   receiverId: z.string().min(1),
   subjectId: z.string().optional(),
-  entryFee: z.number().min(0).max(100).default(0),
 })
 
 export async function GET(req: NextRequest) {
@@ -43,7 +42,6 @@ export async function GET(req: NextRequest) {
     const mapped = challenges.map((c) => ({
       id: c.id,
       status: c.status,
-      wagerAmount: Number(c.entryFee),
       expiresAt: c.expiresAt.toISOString(),
       createdAt: c.createdAt.toISOString(),
       subject: c.subjectId ? subjectMap[c.subjectId] ?? null : null,
@@ -67,7 +65,7 @@ export async function POST(req: NextRequest) {
     const parsed = createSchema.safeParse(body)
     if (!parsed.success) return apiError(parsed.error.errors[0]?.message || 'Invalid input')
 
-    const { receiverId, subjectId, entryFee } = parsed.data
+    const { receiverId, subjectId } = parsed.data
 
     if (receiverId === session.sub) {
       return apiError('You cannot challenge yourself')
@@ -93,7 +91,7 @@ export async function POST(req: NextRequest) {
         senderId: session.sub,
         receiverId,
         subjectId: subjectId || null,
-        entryFee,
+        entryFee: 0,
         status: 'PENDING',
         expiresAt,
       },

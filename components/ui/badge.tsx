@@ -6,13 +6,13 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white/5 border border-white/10 text-slate-300',
-        purple: 'bg-allq-purple/15 border border-allq-purple/30 text-allq-purple',
-        cyan: 'bg-allq-cyan/15 border border-allq-cyan/30 text-allq-cyan',
-        green: 'bg-allq-green/15 border border-allq-green/30 text-allq-green',
-        amber: 'bg-allq-amber/15 border border-allq-amber/30 text-allq-amber',
-        red: 'bg-allq-red/15 border border-allq-red/30 text-allq-red',
-        pink: 'bg-allq-pink/15 border border-allq-pink/30 text-allq-pink',
+        default: 'bg-slate-100 border border-slate-200 text-slate-600',
+        purple: 'bg-allq-purple/10 border border-allq-purple/25 text-allq-purple',
+        cyan: 'bg-allq-cyan/10 border border-allq-cyan/25 text-cyan-700',
+        green: 'bg-allq-green/10 border border-allq-green/25 text-emerald-700',
+        amber: 'bg-allq-amber/10 border border-allq-amber/25 text-amber-700',
+        red: 'bg-allq-red/10 border border-allq-red/25 text-rose-600',
+        pink: 'bg-allq-pink/10 border border-allq-pink/25 text-pink-600',
         pro: 'badge-pro text-white',
         starter: 'badge-starter text-white',
       },

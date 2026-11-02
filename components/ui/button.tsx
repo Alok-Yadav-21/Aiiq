@@ -9,9 +9,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'btn-neon text-white',
-        secondary: 'glass border border-white/10 text-slate-200 hover:border-allq-purple/40 hover:text-white',
-        ghost: 'text-slate-400 hover:text-white hover:bg-white/5',
+        primary: 'btn-grad text-white shadow-sm hover:shadow-md',
+        secondary: 'bg-white border border-slate-200 text-slate-700 hover:border-allq-purple/40 hover:text-slate-900 shadow-sm',
+        ghost: 'text-slate-500 hover:text-slate-900 hover:bg-slate-100',
         danger: 'bg-allq-red/10 border border-allq-red/30 text-allq-red hover:bg-allq-red/20',
         success: 'bg-allq-green/10 border border-allq-green/30 text-allq-green hover:bg-allq-green/20',
         cyan: 'bg-gradient-to-r from-allq-cyan to-allq-cyan-dim text-white shadow-neon-cyan hover:shadow-[0_0_30px_rgba(6,182,212,0.7)]',

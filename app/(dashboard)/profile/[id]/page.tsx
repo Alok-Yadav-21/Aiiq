@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/hooks/useAuth'
-import { getRankBadge, formatCurrency } from '@/lib/utils'
+import { getRankBadge } from '@/lib/utils'
 import {
   Trophy, Target, Flame, TrendingUp, Swords,
   Crown, Star, ChevronLeft, BookOpen, Users
@@ -19,13 +19,13 @@ function StatCard({ label, value, icon: Icon, color }: {
   label: string; value: string | number; icon: React.ElementType; color: string
 }) {
   return (
-    <div className="glass rounded-2xl p-4 flex items-center gap-3">
+    <div className="surface-card rounded-2xl p-4 flex items-center gap-3">
       <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: color + '15' }}>
         <Icon className="h-5 w-5" style={{ color }} />
       </div>
       <div>
-        <div className="text-lg font-black text-white">{value}</div>
-        <div className="text-xs text-slate-400">{label}</div>
+        <div className="text-lg font-black text-slate-900">{value}</div>
+        <div className="text-xs text-slate-500">{label}</div>
       </div>
     </div>
   )
@@ -49,7 +49,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 lg:p-8 max-w-4xl space-y-6">
+      <div className="px-5 py-7 lg:px-9 lg:py-9 max-w-4xl mx-auto space-y-6">
         <Skeleton className="h-48 rounded-2xl" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
@@ -61,10 +61,10 @@ export default function ProfilePage() {
   if (!data) {
     return (
       <div className="p-6 lg:p-8 max-w-4xl">
-        <div className="glass rounded-2xl p-12 text-center">
-          <Users className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-          <h2 className="text-xl font-black text-white mb-2">User Not Found</h2>
-          <p className="text-slate-400 mb-6">This profile doesn't exist or has been removed.</p>
+        <div className="surface-card rounded-2xl p-12 text-center">
+          <Users className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+          <h2 className="text-xl font-black text-slate-900 mb-2">User Not Found</h2>
+          <p className="text-slate-500 mb-6">This profile doesn't exist or has been removed.</p>
           <Link href="/leaderboard">
             <Button variant="outline">View Leaderboard</Button>
           </Link>
@@ -83,7 +83,7 @@ export default function ProfilePage() {
     <div className="p-6 lg:p-8 max-w-4xl">
       <Link
         href="/leaderboard"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors mb-6"
       >
         <ChevronLeft className="h-4 w-4" /> Back to Leaderboard
       </Link>
@@ -92,7 +92,7 @@ export default function ProfilePage() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-2xl p-6 mb-6 relative overflow-hidden"
+        className="surface-card rounded-2xl p-6 mb-6 relative overflow-hidden"
       >
         {/* Background gradient */}
         <div
@@ -107,8 +107,8 @@ export default function ProfilePage() {
               {(data.name || 'U')[0].toUpperCase()}
             </div>
             {data.subscription?.plan === 'PRO' && (
-              <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-allq-amber flex items-center justify-center border-2 border-bg-base">
-                <Crown className="h-3.5 w-3.5 text-bg-base" />
+              <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-allq-amber flex items-center justify-center border-2 border-white">
+                <Crown className="h-3.5 w-3.5 text-white" />
               </div>
             )}
           </div>
@@ -117,7 +117,7 @@ export default function ProfilePage() {
           <div className="flex-1">
             <div className="flex items-start justify-between flex-wrap gap-3">
               <div>
-                <h1 className="text-2xl font-black text-white">
+                <h1 className="text-2xl font-black text-slate-900">
                   {data.name || 'Anonymous'}
                   {isOwnProfile && (
                     <span className="text-allq-purple text-sm font-normal ml-2">(You)</span>
@@ -127,8 +127,8 @@ export default function ProfilePage() {
                   <span className="text-sm font-bold" style={{ color: rank.color }}>
                     {rank.label}
                   </span>
-                  <span className="text-slate-600">·</span>
-                  <span className="text-sm text-slate-400">{profile?.eloRating || 1200} ELO</span>
+                  <span className="text-slate-400">·</span>
+                  <span className="text-sm text-slate-500">{profile?.eloRating || 1200} ELO</span>
                   <Badge
                     variant={data.subscription?.plan === 'PRO' ? 'pro' : data.subscription?.plan === 'STARTER' ? 'starter' : 'default'}
                     size="sm"
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                 <span>Progress to next rank</span>
                 <span style={{ color: rank.color }}>{profile?.eloRating || 1200}</span>
               </div>
-              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, ((profile?.eloRating || 1200) / 2200) * 100)}%` }}
@@ -175,7 +175,6 @@ export default function ProfilePage() {
         <StatCard label="Total Wins" value={profile?.totalWins || 0} icon={Trophy} color="#f59e0b" />
         <StatCard label="Win Rate" value={`${winRate}%`} icon={Target} color="#8b5cf6" />
         <StatCard label="Streak" value={`${profile?.weeklyStreak || 0}d`} icon={Flame} color="#ef4444" />
-        <StatCard label="Earned" value={formatCurrency(Number(profile?.totalEarnings || 0))} icon={TrendingUp} color="#10b981" />
       </motion.div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -190,16 +189,16 @@ export default function ProfilePage() {
             <CardContent>
               <div className="flex items-center gap-4 mb-4">
                 <div className="text-center flex-1">
-                  <div className="text-3xl font-black text-allq-green">{profile?.totalWins || 0}</div>
-                  <div className="text-xs text-slate-400">Wins</div>
+                  <div className="text-3xl font-black text-emerald-600">{profile?.totalWins || 0}</div>
+                  <div className="text-xs text-slate-500">Wins</div>
                 </div>
-                <div className="text-2xl font-black text-slate-600">—</div>
+                <div className="text-2xl font-black text-slate-400">—</div>
                 <div className="text-center flex-1">
                   <div className="text-3xl font-black text-allq-red">{profile?.totalLosses || 0}</div>
-                  <div className="text-xs text-slate-400">Losses</div>
+                  <div className="text-xs text-slate-500">Losses</div>
                 </div>
               </div>
-              <div className="h-3 bg-white/5 rounded-full overflow-hidden flex">
+              <div className="h-3 bg-slate-100 rounded-full overflow-hidden flex">
                 <motion.div
                   className="bg-allq-green rounded-l-full"
                   initial={{ width: 0 }}
@@ -231,18 +230,18 @@ export default function ProfilePage() {
                     <Link
                       key={sub.id}
                       href={`/subjects/${sub.id}`}
-                      className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-white/5 transition-colors group"
+                      className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-slate-100 transition-colors group"
                     >
                       <div className="h-8 w-8 rounded-lg bg-allq-purple/10 flex items-center justify-center text-xs font-bold text-allq-purple flex-shrink-0">
                         {sub.title[0]}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate group-hover:text-allq-purple transition-colors">
+                        <p className="text-sm font-medium text-slate-900 truncate group-hover:text-allq-purple transition-colors">
                           {sub.title}
                         </p>
                         <p className="text-xs text-slate-500">{sub.category}</p>
                       </div>
-                      <Star className="h-3.5 w-3.5 text-slate-600 group-hover:text-allq-amber transition-colors" />
+                      <Star className="h-3.5 w-3.5 text-slate-400 group-hover:text-allq-amber transition-colors" />
                     </Link>
                   ))}
                 </div>

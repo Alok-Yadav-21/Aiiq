@@ -41,3 +41,8 @@ next-env.d.ts
 
 # Uploads
 uploads/
+
+# Poster generation secrets — local auth token / session id (never commit)
+poster/.token
+poster/.sid
+*.token

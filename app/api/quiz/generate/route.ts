@@ -133,15 +133,6 @@ export async function POST(req: NextRequest) {
 
     // ── Create quiz session ────────────────────────────────────────────────────
     const totalDuration = questions.reduce((sum, q) => sum + q.timeLimitSeconds, 0)
-    const session = await prisma.quizSession.create({
-      data: {
-        subjectId,
-        userId: payload.sub,
-        questionCount: questions.length,
-        durationSeconds: totalDuration,
-        maxScore: questions.length * 100,
-      },
-    })
 
     // Fetch saved questions from DB so we have their actual IDs
     const newFingerprints = questions.map((q) => q.fingerprint)
@@ -164,6 +155,18 @@ export async function POST(req: NextRequest) {
       },
       orderBy: { createdAt: 'desc' },
       take: questions.length,
+    })
+
+    // Persist the exact question set so the session can be reloaded and resumed.
+    const session = await prisma.quizSession.create({
+      data: {
+        subjectId,
+        userId: payload.sub,
+        questionCount: bankQuestions.length,
+        questionIds: bankQuestions.map((q) => q.id),
+        durationSeconds: totalDuration,
+        maxScore: bankQuestions.length * 100,
+      },
     })
 
     return apiResponse({

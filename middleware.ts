@@ -3,7 +3,7 @@ import { verifyAccessToken } from './lib/auth'
 
 const publicRoutes = ['/', '/login', '/signup', '/pricing', '/about', '/terms', '/privacy', '/forgot-password', '/reset-password', '/compete/preview']
 const authRoutes = ['/login', '/signup']
-const protectedRoutes = ['/dashboard', '/subjects', '/compete', '/settings', '/profile', '/challenges', '/analytics']
+const protectedRoutes = ['/dashboard', '/subjects', '/compete', '/settings', '/profile', '/challenges', '/analytics', '/quiz', '/notifications']
 // Paths that start with a protected prefix but are actually public
 const publicExceptions = ['/compete/preview']
 

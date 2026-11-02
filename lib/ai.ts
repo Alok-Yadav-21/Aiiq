@@ -145,7 +145,7 @@ async function generateJSON<T>(opts: { system: string; user: UserContent; maxTok
   return JSON.parse(extractJson(text)) as T
 }
 
-const GROUNDING = `You are AllQ's study-material generator. You create learning resources STRICTLY from the SOURCE MATERIAL provided by the user.
+const GROUNDING = `You are AIIQ's study-material generator. You create learning resources STRICTLY from the SOURCE MATERIAL provided by the user.
 
 Absolute rules:
 - Use ONLY the facts, terms, definitions, and ideas that appear in the SOURCE MATERIAL. Never introduce outside knowledge, unrelated topics, or general trivia.
@@ -377,7 +377,7 @@ Return JSON: {"text":string,"hasDiagrams":boolean,"diagramDescriptions":string[]
 // ─── Chat (grounded, streaming) ──────────────────────────────────────────────────
 
 function chatSystem(documentContext: string, audienceLevel: string): string {
-  return `You are AllQ's AI study assistant — an expert tutor for ${audienceLevel} students.
+  return `You are AIIQ's AI study assistant — an expert tutor for ${audienceLevel} students.
 Ground every answer in the STUDY MATERIAL below. Use **bold** for key terms, short paragraphs, and lists where helpful.
 At the end of each answer add a "📌 Source:" line quoting a relevant <=15 word excerpt. If the answer is not in the material, say "⚠️ This isn't covered in your uploaded material." then answer briefly from general knowledge.
 Keep responses under 250 words unless asked for more.

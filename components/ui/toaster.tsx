@@ -13,10 +13,10 @@ const icons = {
 }
 
 const colors = {
-  success: 'border-allq-green/30 text-allq-green',
-  error: 'border-allq-red/30 text-allq-red',
-  warning: 'border-allq-amber/30 text-allq-amber',
-  info: 'border-allq-cyan/30 text-allq-cyan',
+  success: 'border-emerald-200 text-emerald-600',
+  error: 'border-rose-200 text-rose-600',
+  warning: 'border-amber-200 text-amber-600',
+  info: 'border-cyan-200 text-cyan-700',
 }
 
 export function Toaster() {
@@ -34,22 +34,22 @@ export function Toaster() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 40, scale: 0.95 }}
               className={cn(
-                'glass rounded-xl px-4 py-3 flex items-start gap-3 shadow-card border',
+                'surface-card rounded-xl px-4 py-3 flex items-start gap-3 border',
                 colors[toast.type || 'info']
               )}
             >
               <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 {toast.title && (
-                  <p className="font-semibold text-sm text-white">{toast.title}</p>
+                  <p className="font-semibold text-sm text-slate-900">{toast.title}</p>
                 )}
                 {toast.description && (
-                  <p className="text-xs text-slate-400 mt-0.5">{toast.description}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{toast.description}</p>
                 )}
               </div>
               <button
                 onClick={() => dismiss(toast.id)}
-                className="text-slate-500 hover:text-white transition-colors flex-shrink-0"
+                className="text-slate-400 hover:text-slate-900 transition-colors flex-shrink-0"
               >
                 <X className="h-4 w-4" />
               </button>

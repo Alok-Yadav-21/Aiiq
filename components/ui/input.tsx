@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5 w-full">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-slate-300">
+          <label htmlFor={inputId} className="text-sm font-medium text-slate-700">
             {label}
           </label>
         )}
@@ -31,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             suppressHydrationWarning
             className={cn(
-              'input-glass w-full rounded-xl px-4 py-3 text-sm',
+              'input-light w-full rounded-xl px-4 py-3 text-sm',
               leftIcon && 'pl-10',
               rightElement && 'pr-12',
               error && 'border-allq-red/50 focus:border-allq-red/80 focus:shadow-none',

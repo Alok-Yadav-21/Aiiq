@@ -19,7 +19,7 @@ export function MobileNav() {
   const { isPro } = useAuth()
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/5 bg-bg-base/95 backdrop-blur-xl">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-line-warm bg-white/95 backdrop-blur-xl">
       <div className="flex items-center justify-around h-16 px-2">
         {mobileNav.map((item) => {
           const isActive = pathname?.startsWith(item.href)
@@ -30,15 +30,15 @@ export function MobileNav() {
               key={item.href}
               href={isLocked ? '/pricing' : item.href}
               className={cn(
-                'flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all min-w-0',
-                isActive ? 'text-allq-purple' : 'text-slate-500 hover:text-slate-300'
+                'relative flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-colors min-w-0',
+                isActive ? 'text-gold-700' : 'text-ink-faint hover:text-ink'
               )}
             >
+              {isActive && (
+                <span className="absolute top-0 h-0.5 w-6 rounded-full bg-gold-deep" />
+              )}
               <item.icon className="h-5 w-5 flex-shrink-0" />
               <span className="text-[10px] font-medium truncate">{item.label}</span>
-              {isActive && (
-                <span className="absolute -bottom-0 h-0.5 w-8 bg-allq-purple rounded-full" />
-              )}
             </Link>
           )
         })}

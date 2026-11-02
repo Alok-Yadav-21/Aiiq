@@ -68,10 +68,10 @@ export default function NewSubjectPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-3xl">
+    <div className="px-5 py-7 lg:px-9 lg:py-9 max-w-3xl mx-auto">
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-6"
+        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors mb-6"
       >
         <ChevronLeft className="h-4 w-4" /> Back
       </button>
@@ -82,15 +82,15 @@ export default function NewSubjectPage() {
             <BookOpen className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white">Create New Subject</h1>
-            <p className="text-slate-400 text-sm">Fill in the details — you can always edit later</p>
+            <h1 className="text-2xl font-black text-slate-900">Create New Subject</h1>
+            <p className="text-slate-500 text-sm">Fill in the details — you can always edit later</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title + Description */}
-          <div className="glass rounded-2xl p-6 space-y-4">
-            <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider">Basic Info</h2>
+          <div className="surface-card rounded-2xl p-6 space-y-4">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Basic Info</h2>
             <Input
               label="Subject Title"
               placeholder="e.g., Advanced JavaScript Fundamentals"
@@ -98,20 +98,20 @@ export default function NewSubjectPage() {
               {...register('title')}
             />
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-slate-300">Description</label>
+              <label className="text-sm font-medium text-slate-700">Description</label>
               <textarea
                 {...register('description')}
                 rows={3}
                 placeholder="What will learners understand after studying this subject? Be specific — the AI uses this to generate better questions."
-                className="input-glass w-full rounded-xl px-4 py-3 text-sm resize-none"
+                className="input-light w-full rounded-xl px-4 py-3 text-sm resize-none"
               />
               {errors.description && <p className="text-xs text-allq-red">{errors.description.message}</p>}
             </div>
           </div>
 
           {/* Category */}
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Category</h2>
+          <div className="surface-card rounded-2xl p-6">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Category</h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {CATEGORIES.map((cat) => {
                 const selected = watch('category') === cat
@@ -124,7 +124,7 @@ export default function NewSubjectPage() {
                       'py-2 px-3 rounded-xl text-xs font-medium transition-all border text-left',
                       selected
                         ? 'bg-allq-purple/15 text-allq-purple border-allq-purple/40'
-                        : 'text-slate-400 border-white/5 hover:border-white/15 hover:text-white'
+                        : 'text-slate-500 bg-white border-slate-200 hover:border-slate-300 hover:text-slate-900'
                     )}
                   >
                     {cat.charAt(0) + cat.slice(1).toLowerCase()}
@@ -135,8 +135,8 @@ export default function NewSubjectPage() {
           </div>
 
           {/* Difficulty */}
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Difficulty Level</h2>
+          <div className="surface-card rounded-2xl p-6">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Difficulty Level</h2>
             <div className="grid grid-cols-2 gap-3">
               {DIFFICULTIES.map((d) => {
                 const meta = DIFFICULTY_META[d as keyof typeof DIFFICULTY_META]
@@ -150,14 +150,14 @@ export default function NewSubjectPage() {
                       'p-4 rounded-xl border text-left transition-all',
                       selected
                         ? `bg-allq-${meta.color}/10 border-allq-${meta.color}/40`
-                        : 'border-white/5 hover:border-white/15'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
                     )}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-bold text-white">{meta.label}</span>
+                      <span className="text-sm font-bold text-slate-900">{meta.label}</span>
                       {selected && <Badge variant={meta.color as any} size="sm">Selected</Badge>}
                     </div>
-                    <p className="text-xs text-slate-400">{meta.desc}</p>
+                    <p className="text-xs text-slate-500">{meta.desc}</p>
                   </button>
                 )
               })}
@@ -165,11 +165,11 @@ export default function NewSubjectPage() {
           </div>
 
           {/* Tags */}
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Tags ({tags.length}/10)</h2>
+          <div className="surface-card rounded-2xl p-6">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Tags ({tags.length}/10)</h2>
             <div className="flex gap-2 mb-3">
               <div className="relative flex-1">
-                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10" />
                 <input
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
@@ -178,7 +178,7 @@ export default function NewSubjectPage() {
                     if (e.key === ',') { e.preventDefault(); addTag(tagInput) }
                   }}
                   placeholder="Type a tag and press Enter..."
-                  className="input-glass w-full pl-9 pr-4 py-2.5 text-sm rounded-xl"
+                  className="input-light w-full pl-9 pr-4 py-2.5 text-sm rounded-xl"
                 />
               </div>
               <Button type="button" variant="secondary" size="sm" onClick={() => addTag(tagInput)}>
@@ -205,32 +205,32 @@ export default function NewSubjectPage() {
           </div>
 
           {/* Visibility */}
-          <div className="glass rounded-2xl p-6">
-            <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4">Visibility</h2>
+          <div className="surface-card rounded-2xl p-6">
+            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Visibility</h2>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setValue('isPublic', true)}
                 className={cn(
                   'p-4 rounded-xl border text-left transition-all',
-                  isPublic ? 'bg-allq-green/10 border-allq-green/30' : 'border-white/5 hover:border-white/15'
+                  isPublic ? 'bg-allq-green/10 border-allq-green/30' : 'bg-white border-slate-200 hover:border-slate-300'
                 )}
               >
-                <Globe className={cn('h-5 w-5 mb-2', isPublic ? 'text-allq-green' : 'text-slate-500')} />
-                <p className="text-sm font-bold text-white">Public</p>
-                <p className="text-xs text-slate-400">Anyone can find & enrol</p>
+                <Globe className={cn('h-5 w-5 mb-2', isPublic ? 'text-emerald-600' : 'text-slate-400')} />
+                <p className="text-sm font-bold text-slate-900">Public</p>
+                <p className="text-xs text-slate-500">Anyone can find & enrol</p>
               </button>
               <button
                 type="button"
                 onClick={() => setValue('isPublic', false)}
                 className={cn(
                   'p-4 rounded-xl border text-left transition-all',
-                  !isPublic ? 'bg-allq-cyan/10 border-allq-cyan/30' : 'border-white/5 hover:border-white/15'
+                  !isPublic ? 'bg-allq-cyan/10 border-allq-cyan/30' : 'bg-white border-slate-200 hover:border-slate-300'
                 )}
               >
-                <Lock className={cn('h-5 w-5 mb-2', !isPublic ? 'text-allq-cyan' : 'text-slate-500')} />
-                <p className="text-sm font-bold text-white">Private</p>
-                <p className="text-xs text-slate-400">Only visible to you</p>
+                <Lock className={cn('h-5 w-5 mb-2', !isPublic ? 'text-cyan-600' : 'text-slate-400')} />
+                <p className="text-sm font-bold text-slate-900">Private</p>
+                <p className="text-xs text-slate-500">Only visible to you</p>
               </button>
             </div>
           </div>

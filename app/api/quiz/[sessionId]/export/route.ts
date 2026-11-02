@@ -84,7 +84,7 @@ export async function GET(
       ]
 
       const csvContent = [
-        `# AllQ Quiz Results Export`,
+        `# AIIQ Quiz Results Export`,
         `# Subject: ${session.subject.title}`,
         `# Date: ${formatDate(attempt.createdAt)}`,
         `# Student: ${user?.name || 'Unknown'} (${user?.email || ''})`,
@@ -97,7 +97,7 @@ export async function GET(
       return new Response(csvContent, {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="allq-quiz-${sessionId.slice(-8)}-${Date.now()}.csv"`,
+          'Content-Disposition': `attachment; filename="aiiq-quiz-${sessionId.slice(-8)}-${Date.now()}.csv"`,
         },
       })
     }
@@ -137,7 +137,7 @@ export async function GET(
     return new Response(JSON.stringify(exportData, null, 2), {
       headers: {
         'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="allq-quiz-${sessionId.slice(-8)}-${Date.now()}.json"`,
+        'Content-Disposition': `attachment; filename="aiiq-quiz-${sessionId.slice(-8)}-${Date.now()}.json"`,
       },
     })
   } catch (error) {

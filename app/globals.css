@@ -4,16 +4,59 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   AIIQ DESIGN SYSTEM
+   One system, one identity: warm-grey canvas, white sheets, ink-black display
+   type, champagne-gold accent. Editorial luxury applied to a learning product.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
   --font-inter: 'Inter', system-ui, sans-serif;
-  --bg-base: #050507;
-  --bg-surface: #0e0e16;
-  --bg-elevated: #16162a;
-  --color-purple: #8b5cf6;
-  --color-cyan: #06b6d4;
-  --color-pink: #ec4899;
-  --color-green: #10b981;
-  --border: rgba(255, 255, 255, 0.08);
+
+  /* Canvas & surfaces */
+  --canvas: #e4e3e0;
+  --sheet: #ffffff;
+  --sheet-grad-end: #f1f0ee;
+  --surface-sunken: #f5f4f2;
+
+  /* Ink */
+  --ink: #111111;
+  --ink-secondary: #444444;
+  --ink-muted: #8b8b87;
+  --ink-faint: #b3b3af;
+
+  /* Champagne / rose-gold accent */
+  --gold-light: #efd9b8;
+  --gold: #cda06f;
+  --gold-deep: #9c6d44;
+  --gold-ink: #8a5e38;
+  --gold-tint: #faf6ef;
+  --gold-gradient: linear-gradient(135deg, #efd9b8 0%, #cda06f 46%, #9c6d44 100%);
+
+  /* Hairlines */
+  --line: rgba(0, 0, 0, 0.08);
+  --line-soft: rgba(0, 0, 0, 0.06);
+  --line-warm: #e6e0d4;
+  --line-card: #ece8e0;
+
+  /* Semantic — muted to sit beside champagne without shouting */
+  --success: #0f9b6c;
+  --success-tint: #e9f7f1;
+  --warning: #b4802a;
+  --warning-tint: #fbf3e4;
+  --danger: #c8443c;
+  --danger-tint: #fbeceb;
+
+  /* Elevation */
+  --shadow-sheet: 0 40px 90px -30px rgba(0, 0, 0, 0.18);
+  --shadow-card: 0 2px 16px rgba(45, 35, 20, 0.06);
+  --shadow-card-hover: 0 12px 32px rgba(45, 35, 20, 0.1);
+  --shadow-pop: 0 24px 80px rgba(45, 35, 20, 0.18);
+
+  /* Radii */
+  --r-sheet: 30px;
+  --r-card: 1.25rem;
+  --r-control: 0.75rem;
 }
 
 * {
@@ -26,8 +69,8 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--bg-base);
-  color: #f1f5f9;
+  background-color: var(--canvas);
+  color: var(--ink);
   font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -39,214 +82,185 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-surface);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(169, 119, 75, 0.3);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  background: rgba(169, 119, 75, 0.55);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(139, 92, 246, 0.3);
-  color: #f1f5f9;
+  background: rgba(205, 160, 111, 0.3);
+  color: var(--ink);
 }
 
 /* Focus ring */
 *:focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline: 2px solid rgba(169, 119, 75, 0.65);
   outline-offset: 2px;
 }
 
 @layer components {
-  /* Glass card */
-  .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
+  /* ─── Canvas ──────────────────────────────────────────────────────────── */
 
-  .glass-hover {
-    @apply glass transition-all duration-300;
-  }
-
-  .glass-hover:hover {
-    border-color: rgba(139, 92, 246, 0.3);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  /* Neon text */
-  .neon-text {
-    text-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.4);
-  }
-
-  .neon-text-cyan {
-    text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4);
-  }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-text-gold {
-    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Neon button */
-  .btn-neon {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-    transition: all 0.3s ease;
-  }
-
-  .btn-neon:hover {
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.7), 0 0 60px rgba(139, 92, 246, 0.3);
-    transform: translateY(-1px);
-  }
-
-  .btn-neon:active {
-    transform: translateY(0);
-  }
-
-  /* Input */
-  .input-glass {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #f1f5f9;
-    transition: all 0.2s ease;
-  }
-
-  .input-glass:focus {
-    border-color: rgba(139, 92, 246, 0.6);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1), 0 0 20px rgba(139, 92, 246, 0.15);
-    outline: none;
-  }
-
-  .input-glass::placeholder {
-    color: rgba(148, 163, 184, 0.5);
-  }
-
-  /* Timer bar */
-  .timer-bar {
-    height: 4px;
-    border-radius: 2px;
-    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
-    transition: width linear, background-color 0.3s;
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-  }
-
-  .timer-bar.danger {
-    background: linear-gradient(90deg, #ef4444, #f97316);
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-  }
-
-  /* Shimmer skeleton */
-  .skeleton {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.03) 25%,
-      rgba(255, 255, 255, 0.08) 50%,
-      rgba(255, 255, 255, 0.03) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 6px;
-  }
-
-  /* Badge glow */
-  .badge-pro {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
-  }
-
-  .badge-starter {
-    background: linear-gradient(135deg, #10b981, #06b6d4);
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-  }
-
-  /* Hero gradient background */
-  .hero-bg {
-    background-color: var(--bg-base);
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.25), transparent),
-      radial-gradient(ellipse 50% 80% at 80% 50%, rgba(6, 182, 212, 0.08), transparent);
-  }
-
-  /* Page background */
-  .page-bg {
-    background-color: var(--bg-base);
+  /* Full warm-grey page canvas (marketing + app share this). */
+  .page-canvas {
+    background-color: var(--canvas);
     min-height: 100vh;
   }
-}
 
-@layer components {
-  /* ─── Premium light design system (AIIQ redesign) ───────────────────────────
-     Additive tokens: existing dark pages are untouched until converted.
-     Pattern: dark app chrome (navbar/sidebar) + soft-neutral light content. */
-
-  /* Light page canvas — fills the content area below the navbar. */
+  /* App content canvas, sits below the 4rem fixed navbar. */
   .app-canvas {
-    background-color: #eef1f6;
+    background-color: var(--canvas);
     min-height: calc(100vh - 4rem);
   }
 
-  /* White rounded card with soft shadow. */
-  .surface-card {
-    background: #ffffff;
-    border: 1px solid #eef0f4;
-    border-radius: 1rem;
-    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
+  /* The editorial "sheet" — the white rounded slab the marketing site sits on. */
+  .sheet {
+    background: linear-gradient(180deg, var(--sheet) 0%, var(--sheet-grad-end) 100%);
+    border-radius: var(--r-sheet);
+    box-shadow: var(--shadow-sheet);
+    overflow: hidden;
   }
+
+  /* ─── Surfaces ────────────────────────────────────────────────────────── */
+
+  .surface-card {
+    background: var(--sheet);
+    border: 1px solid var(--line-card);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-card);
+  }
+
   .surface-card-hover {
     @apply surface-card transition-all duration-200;
   }
   .surface-card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+    box-shadow: var(--shadow-card-hover);
   }
 
-  /* Light form control. */
-  .input-light {
-    background: #ffffff;
-    border: 1px solid #e2e6ee;
-    color: #0f172a;
-    border-radius: 0.75rem;
-    transition: all 0.18s ease;
+  /* Recessed panel — for nested content inside a card. */
+  .surface-sunken {
+    background: var(--surface-sunken);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-control);
   }
-  .input-light:focus {
-    border-color: rgba(139, 92, 246, 0.6);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
-    outline: none;
-  }
-  .input-light::placeholder { color: #94a3b8; }
 
-  /* Primary gradient action (works on light surfaces). */
+  /* ─── Typography ──────────────────────────────────────────────────────── */
+
+  /* Wide-tracked uppercase micro-label — the signature editorial detail. */
+  .label-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  /* Ultra-bold display heading. */
+  .display {
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    color: var(--ink);
+  }
+
+  /* Champagne gradient text. */
+  .gradient-text {
+    background-image: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ─── Controls ────────────────────────────────────────────────────────── */
+
+  /* Primary action — champagne gradient. */
   .btn-grad {
-    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #c08f5e 0%, #8a5e38 100%);
     color: #fff;
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
-  .btn-grad:hover { opacity: 0.92; }
-  .btn-grad:active { transform: translateY(1px); }
+  .btn-grad:hover {
+    opacity: 0.92;
+  }
+  .btn-grad:active {
+    transform: translateY(1px);
+  }
 
-  /* Light shimmer skeleton (for converted pages). */
+  /* Outline pill — the marketing site's "GET STARTED" treatment. */
+  .btn-pill {
+    border: 1px solid var(--ink);
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .btn-pill:hover {
+    background-color: var(--ink);
+    color: #fff;
+  }
+
+  /* Form control. */
+  .input-light {
+    background: var(--sheet);
+    border: 1px solid var(--line-warm);
+    color: var(--ink);
+    border-radius: var(--r-control);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .input-light:focus {
+    border-color: rgba(169, 119, 75, 0.65);
+    box-shadow: 0 0 0 3px rgba(169, 119, 75, 0.14);
+    outline: none;
+  }
+  .input-light::placeholder {
+    color: var(--ink-faint);
+  }
+
+  /* ─── Feedback ────────────────────────────────────────────────────────── */
+
+  /* Shimmer skeleton. `.skeleton` and `.skeleton-light` are the same thing. */
+  .skeleton,
   .skeleton-light {
-    background: linear-gradient(90deg, #eef0f4 25%, #e3e7ee 50%, #eef0f4 75%);
+    background: linear-gradient(
+      90deg,
+      #eeece8 25%,
+      #e3e0da 50%,
+      #eeece8 75%
+    );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     border-radius: 8px;
+  }
+
+  /* Quiz countdown bar. */
+  .timer-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+    transition: width linear, background-color 0.3s;
+  }
+  .timer-bar.danger {
+    background: linear-gradient(90deg, var(--danger), #e07a4a);
+  }
+
+  /* Plan badges. */
+  .badge-pro {
+    background: linear-gradient(135deg, var(--gold), var(--gold-ink));
+    box-shadow: 0 4px 12px -4px rgba(169, 119, 75, 0.45);
+  }
+  .badge-starter {
+    background: linear-gradient(135deg, #d8b98a, var(--gold-deep));
+    box-shadow: 0 4px 12px -4px rgba(169, 119, 75, 0.3);
   }
 }
 

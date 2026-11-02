@@ -2,50 +2,67 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { useAuth } from '@/hooks/useAuth'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
-  TrendingUp, Target, Flame, Trophy, Brain,
-  Crown, Lock, BookOpen, BarChart2, Zap
+  TrendingUp, Target, Flame, ListChecks, Lock,
+  BarChart2, ArrowRight, Sparkles,
 } from 'lucide-react'
-import { cn, formatCurrency, getRankBadge } from '@/lib/utils'
 
-function MiniBarChart({ data, color = '#8b5cf6' }: { data: number[]; color?: string }) {
-  const max = Math.max(...data, 1)
+type Topic = { topic: string; answered: number; correct: number; accuracy: number }
+type Day = { date: string; count: number }
+
+function ActivityChart({ data }: { data: Day[] }) {
+  const max = Math.max(...data.map((d) => d.count), 1)
   return (
-    <div className="flex items-end gap-1 h-16">
-      {data.map((v, i) => (
-        <motion.div
-          key={i}
-          initial={{ height: 0 }}
-          animate={{ height: `${(v / max) * 100}%` }}
-          transition={{ delay: i * 0.04, type: 'spring', damping: 12 }}
-          className="flex-1 rounded-sm min-h-[2px]"
-          style={{ background: color, opacity: v === 0 ? 0.15 : 0.85 }}
-        />
-      ))}
+    <div>
+      <div className="flex items-end gap-1.5 h-28">
+        {data.map((d) => (
+          <div key={d.date} className="flex-1 flex flex-col justify-end group relative">
+            <motion.div
+              initial={{ height: 0 }}
+              animate={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 6 : 2)}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className={cn(
+                'rounded-sm w-full',
+                d.count > 0 ? 'bg-gold-deep' : 'bg-black/[0.07]',
+              )}
+            />
+            {/* Tooltip */}
+            <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[10px] text-white opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              {d.count} on {new Date(d.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between mt-2.5 text-[10px] text-ink-faint">
+        <span>{new Date(data[0]?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+        <span>Today</span>
+      </div>
     </div>
   )
 }
 
-function RadarCell({ label, pct, color }: { label: string; pct: number; color: string }) {
+function TopicBar({ t }: { t: Topic }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex justify-between text-xs">
-        <span className="text-slate-400">{label}</span>
-        <span className="font-bold" style={{ color }}>{pct}%</span>
+    <div>
+      <div className="flex items-center justify-between text-xs mb-1.5">
+        <span className="text-ink-secondary truncate pr-3">{t.topic}</span>
+        <span className="text-ink-faint flex-shrink-0">
+          <span className="font-bold text-ink">{t.accuracy}%</span> · {t.correct}/{t.answered}
+        </span>
       </div>
-      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-1.5 rounded-full bg-black/[0.06] overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="h-full rounded-full"
-          style={{ background: color }}
+          animate={{ width: `${t.accuracy}%` }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className={cn(
+            'h-full rounded-full',
+            t.accuracy >= 80 ? 'bg-success' : t.accuracy >= 50 ? 'bg-warning' : 'bg-danger',
+          )}
         />
       </div>
     </div>
@@ -53,244 +70,160 @@ function RadarCell({ label, pct, color }: { label: string; pct: number; color: s
 }
 
 export default function AnalyticsPage() {
-  const { user, isPro, isStarter } = useAuth()
+  const { isPro, isStarter } = useAuth()
+  const unlocked = isPro || isStarter
 
-  const { data: meData } = useQuery({
-    queryKey: ['me-analytics'],
+  const { data, isLoading } = useQuery({
+    queryKey: ['stats'],
     queryFn: async () => {
-      const res = await fetch('/api/auth/me')
-      const json = await res.json()
-      return json.data
+      const res = await fetch('/api/stats')
+      if (!res.ok) throw new Error('Failed to load statistics')
+      return res.json().then((j) => j.data)
     },
-    enabled: isPro || isStarter,
+    enabled: unlocked,
   })
 
-  const profile = meData?.profile || user?.profile
-  const rank = getRankBadge(profile?.eloRating || 1200)
-
-  const weeklyActivity = [3, 7, 2, 9, 5, 11, 8]
-  const monthlyScores = [420, 390, 580, 510, 640, 720, 680, 750, 690, 810, 870, 920]
-
-  const topicStrengths = [
-    { label: 'JavaScript', pct: 84, color: '#f59e0b' },
-    { label: 'React', pct: 71, color: '#06b6d4' },
-    { label: 'CSS / HTML', pct: 92, color: '#8b5cf6' },
-    { label: 'Node.js', pct: 63, color: '#10b981' },
-    { label: 'Databases', pct: 55, color: '#ec4899' },
-    { label: 'Algorithms', pct: 48, color: '#ef4444' },
-  ]
-
-  if (!isPro && !isStarter) {
+  /* ─── Plan gate ────────────────────────────────────────────────────────── */
+  if (!unlocked) {
     return (
-      <div className="p-6 lg:p-8 max-w-4xl">
-        <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-3">
-          <BarChart2 className="h-7 w-7 text-allq-purple" /> Analytics
-        </h1>
-        <p className="text-slate-400 mb-8">Deep insights into your learning performance</p>
-
-        <div className="glass rounded-2xl p-10 text-center border border-allq-amber/20">
-          <div className="h-16 w-16 rounded-2xl bg-allq-amber/10 flex items-center justify-center mx-auto mb-4">
-            <Crown className="h-8 w-8 text-allq-amber" />
-          </div>
-          <h2 className="text-xl font-black text-white mb-2">Starter+ Required</h2>
-          <p className="text-slate-400 mb-6 max-w-sm mx-auto">
-            Unlock detailed analytics — topic heatmaps, performance trends, accuracy breakdowns, and weak spot detection.
+      <div className="app-canvas px-5 py-7 lg:px-9 lg:py-9">
+        <div className="max-w-3xl mx-auto">
+          <p className="label-eyebrow mb-2">Analytics</p>
+          <h1 className="display text-3xl sm:text-4xl mb-2">Know where you stand.</h1>
+          <p className="text-sm text-ink-secondary mb-8 max-w-lg leading-relaxed">
+            Accuracy per topic, activity over time, and the weak spots worth revising next.
           </p>
-          <Link href="/pricing">
-            <Button><Zap className="h-4 w-4" /> Upgrade to Starter</Button>
-          </Link>
+
+          <div className="surface-card p-10 text-center">
+            <span className="h-12 w-12 rounded-2xl bg-gold-50 border border-gold-200 flex items-center justify-center mx-auto mb-4">
+              <Lock className="h-5 w-5 text-gold-700" />
+            </span>
+            <h2 className="font-bold text-ink mb-1.5">Starter plan required</h2>
+            <p className="text-sm text-ink-muted mb-6 max-w-sm mx-auto leading-relaxed">
+              Detailed analytics are part of Starter and Pro. Your quiz history is still being
+              recorded — upgrade any time and it will all be here.
+            </p>
+            <Link href="/pricing">
+              <Button><Sparkles className="h-4 w-4" /> See plans</Button>
+            </Link>
+          </div>
         </div>
       </div>
     )
   }
 
+  const stats = data?.stats
+  const topics: Topic[] = data?.topics ?? []
+  const activity: Day[] = data?.activity ?? []
+  const weakest: Topic[] = data?.weakestTopics ?? []
+  const strongest: Topic[] = data?.strongestTopics ?? []
+  const hasData = (stats?.questionsAnswered ?? 0) > 0
+  // Weakest/strongest each take 5; below 10 topics the two lists overlap.
+  const splitWorthwhile = topics.length >= 10
+
   return (
-    <div className="p-6 lg:p-8 max-w-6xl">
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-black text-white flex items-center gap-3">
-            <BarChart2 className="h-7 w-7 text-allq-purple" /> Analytics
-          </h1>
-          <p className="text-slate-400 mt-0.5">Your learning performance at a glance</p>
-        </div>
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold border"
-          style={{ borderColor: rank.color + '40', color: rank.color, background: rank.color + '10' }}
-        >
-          <Target className="h-4 w-4" /> {rank.label} · {profile?.eloRating || 1200} ELO
-        </div>
-      </div>
-
-      {/* KPI cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Quiz Accuracy', value: '74%', delta: '+6%', icon: Target, color: 'text-allq-purple', bg: 'bg-allq-purple/10' },
-          { label: 'Avg Score', value: '680', delta: '+45', icon: TrendingUp, color: 'text-allq-cyan', bg: 'bg-allq-cyan/10' },
-          { label: 'Day Streak', value: `${profile?.weeklyStreak || 3}d`, delta: '+1', icon: Flame, color: 'text-allq-red', bg: 'bg-allq-red/10' },
-          { label: 'Total Earned', value: formatCurrency(Number(profile?.totalEarnings || 0)), delta: '', icon: Trophy, color: 'text-allq-amber', bg: 'bg-allq-amber/10' },
-        ].map((s, i) => (
-          <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-            <Card className="glass-hover">
-              <CardContent className="pt-5">
-                <div className={`inline-flex p-2 rounded-xl ${s.bg} mb-3`}>
-                  <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
-                </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-2xl font-black text-white">{s.value}</span>
-                  {s.delta && (
-                    <span className="text-xs font-semibold text-allq-green mb-0.5">{s.delta}</span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Weekly Activity */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Flame className="h-4.5 w-4.5 text-allq-red" /> Weekly Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-2">
-                <MiniBarChart data={weeklyActivity} color="#8b5cf6" />
-              </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-2">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-                  <span key={d}>{d}</span>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-4.5 w-4.5 text-allq-cyan" /> Score Trend (12 weeks)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MiniBarChart data={monthlyScores} color="#06b6d4" />
-              <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
-                <span>12 weeks ago</span>
-                <span className="text-allq-green font-semibold">↑ +119% improvement</span>
-                <span>Now</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Win/Loss record */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-4.5 w-4.5 text-allq-amber" /> Battle Record
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="text-center flex-1">
-                  <div className="text-3xl font-black text-allq-green">{profile?.totalWins || 0}</div>
-                  <div className="text-xs text-slate-400">Wins</div>
-                </div>
-                <div className="text-center flex-1">
-                  <div className="text-3xl font-black text-allq-red">{profile?.totalLosses || 0}</div>
-                  <div className="text-xs text-slate-400">Losses</div>
-                </div>
-                <div className="text-center flex-1">
-                  <div className="text-3xl font-black text-allq-purple">
-                    {(profile?.totalWins || 0) + (profile?.totalLosses || 0) > 0
-                      ? Math.round(((profile?.totalWins || 0) / ((profile?.totalWins || 0) + (profile?.totalLosses || 0))) * 100)
-                      : 0}%
-                  </div>
-                  <div className="text-xs text-slate-400">Win Rate</div>
-                </div>
-              </div>
-              <div className="h-3 bg-white/5 rounded-full overflow-hidden flex">
-                <motion.div
-                  className="bg-allq-green rounded-l-full"
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: `${(profile?.totalWins || 0) + (profile?.totalLosses || 0) > 0
-                      ? ((profile?.totalWins || 0) / ((profile?.totalWins || 0) + (profile?.totalLosses || 0))) * 100
-                      : 50}%`
-                  }}
-                  transition={{ duration: 1 }}
-                />
-                <div className="flex-1 bg-allq-red/60 rounded-r-full" />
-              </div>
-            </CardContent>
-          </Card>
+    <div className="app-canvas px-5 py-7 lg:px-9 lg:py-9">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-7">
+          <p className="label-eyebrow mb-2">Analytics</p>
+          <h1 className="display text-3xl sm:text-4xl mb-2">Your performance</h1>
+          <p className="text-sm text-ink-secondary">
+            Everything here is calculated from quizzes you have actually completed.
+          </p>
         </div>
 
-        {/* Topic Radar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-4.5 w-4.5 text-allq-purple" /> Topic Mastery
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {topicStrengths.map((topic) => (
-                <RadarCell key={topic.label} {...topic} />
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Suggestions */}
-          <Card className="border border-allq-purple/20">
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Zap className="h-4 w-4 text-allq-purple" /> AI Suggestions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
+        {isLoading ? (
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-[120px] rounded-[1.25rem]" />)}
+            </div>
+            <div className="skeleton h-56 rounded-[1.25rem]" />
+          </div>
+        ) : !hasData ? (
+          <div className="surface-card p-12 text-center">
+            <span className="h-12 w-12 rounded-2xl bg-gold-50 border border-gold-200 flex items-center justify-center mx-auto mb-4">
+              <BarChart2 className="h-5 w-5 text-gold-700" />
+            </span>
+            <h2 className="font-bold text-ink mb-1.5">Nothing to analyse yet</h2>
+            <p className="text-sm text-ink-muted mb-6 max-w-sm mx-auto leading-relaxed">
+              Complete your first quiz and this page will fill with your accuracy per topic,
+              activity over time, and what to revise next.
+            </p>
+            <Link href="/subjects">
+              <Button>Go to subjects <ArrowRight className="h-4 w-4" /></Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {/* Headline stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { icon: '📚', text: 'Practice Algorithms — your weakest topic at 48%' },
-                { icon: '🔥', text: 'You\'re on a streak! Keep going to beat your record' },
-                { icon: '🏆', text: 'Try an Advanced quiz — your accuracy is high enough' },
-              ].map((s, i) => (
-                <div key={i} className="flex items-start gap-2.5 text-slate-300">
-                  <span className="text-base leading-none mt-0.5">{s.icon}</span>
-                  <span className="text-xs leading-relaxed">{s.text}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Subjects breakdown */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-allq-cyan" /> By Subject
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {[
-                { name: 'JavaScript', quizzes: 14, accuracy: '84%' },
-                { name: 'React Hooks', quizzes: 8, accuracy: '71%' },
-                { name: 'Web APIs', quizzes: 6, accuracy: '66%' },
+                { label: 'Questions', value: stats.questionsAnswered, sub: `${stats.correctAnswers} correct`, icon: ListChecks },
+                { label: 'Accuracy', value: `${stats.accuracy}%`, sub: 'all time', icon: Target },
+                { label: 'Streak', value: stats.currentStreak, sub: `${stats.studyDays} study ${stats.studyDays === 1 ? 'day' : 'days'}`, icon: Flame },
+                { label: 'Points', value: stats.totalPoints, sub: `${stats.quizzesCompleted} quizzes`, icon: TrendingUp },
               ].map((s) => (
-                <div key={s.name} className="flex items-center gap-3 py-1.5">
-                  <div className="h-8 w-8 rounded-lg bg-allq-purple/10 flex items-center justify-center text-xs font-bold text-allq-purple flex-shrink-0">
-                    {s.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-white truncate">{s.name}</p>
-                    <p className="text-[10px] text-slate-500">{s.quizzes} quizzes</p>
-                  </div>
-                  <span className="text-xs font-bold text-allq-green">{s.accuracy}</span>
+                <div key={s.label} className="surface-card p-5">
+                  <span className="h-8 w-8 rounded-lg bg-gold-50 border border-gold-200 flex items-center justify-center mb-3">
+                    <s.icon className="h-4 w-4 text-gold-700" />
+                  </span>
+                  <div className="text-2xl font-black text-ink tracking-tight">{s.value}</div>
+                  <div className="label-eyebrow mt-1">{s.label}</div>
+                  <div className="text-[11px] text-ink-faint mt-0.5">{s.sub}</div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+
+            {/* Activity */}
+            {activity.length > 0 && (
+              <div className="surface-card p-7">
+                <div className="flex items-baseline justify-between mb-5">
+                  <div>
+                    <h2 className="text-sm font-bold text-ink">Activity</h2>
+                    <p className="text-xs text-ink-faint mt-0.5">Questions answered, last 14 days</p>
+                  </div>
+                </div>
+                <ActivityChart data={activity} />
+              </div>
+            )}
+
+            {/* Topic mastery.
+                Splitting into weakest/strongest only says something once there
+                are enough topics for the two lists to differ — below that it is
+                the same list printed twice, so show a single ranking instead. */}
+            {topics.length > 0 && (
+              splitWorthwhile ? (
+                <div className="grid lg:grid-cols-2 gap-5">
+                  <div className="surface-card p-7">
+                    <h2 className="text-sm font-bold text-ink mb-1">Needs work</h2>
+                    <p className="text-xs text-ink-faint mb-5">Lowest accuracy first.</p>
+                    <div className="space-y-3.5">
+                      {weakest.map((t) => <TopicBar key={t.topic} t={t} />)}
+                    </div>
+                  </div>
+
+                  <div className="surface-card p-7">
+                    <h2 className="text-sm font-bold text-ink mb-1">Strongest</h2>
+                    <p className="text-xs text-ink-faint mb-5">Topics you have mastered.</p>
+                    <div className="space-y-3.5">
+                      {strongest.map((t) => <TopicBar key={t.topic} t={t} />)}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="surface-card p-7">
+                  <h2 className="text-sm font-bold text-ink mb-1">Topic mastery</h2>
+                  <p className="text-xs text-ink-faint mb-5">
+                    {topics.length} {topics.length === 1 ? 'topic' : 'topics'} with enough answers to score — weakest first.
+                  </p>
+                  <div className="space-y-3.5">
+                    {topics.map((t) => <TopicBar key={t.topic} t={t} />)}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -7,7 +7,7 @@ import { Zap, Home, Search, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-bg-base flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#e4e3e0] flex items-center justify-center p-6">
       {/* Background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-allq-purple/8 rounded-full blur-3xl" />
@@ -24,7 +24,7 @@ export default function NotFound() {
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center shadow-neon-purple">
             <Zap className="h-5 w-5 text-white fill-white" />
           </div>
-          <span className="text-2xl font-black gradient-text">AllQ</span>
+          <span className="text-2xl font-black gradient-text">AIIQ</span>
         </Link>
 
         {/* 404 */}
@@ -35,14 +35,14 @@ export default function NotFound() {
           className="mb-6"
         >
           <div className="text-[120px] font-black leading-none gradient-text">404</div>
-          <div className="text-2xl font-black text-white -mt-4">Page Not Found</div>
+          <div className="text-2xl font-black text-slate-900 -mt-4">Page Not Found</div>
         </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-400 text-base leading-relaxed mb-10"
+          className="text-slate-500 text-base leading-relaxed mb-10"
         >
           Looks like this quiz question doesn't exist — or the page has been moved.
           Let's get you back on track.

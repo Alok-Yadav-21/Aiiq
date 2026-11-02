@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AIIQ â€” A1 Academic Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     AIIQ â€” A1 portrait academic poster (594 Ã— 841 mm)
+     Typography scaled for reading at ~1â€“1.5 m.
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+  @page { size: 594mm 841mm; margin: 0; }
+
+  :root {
+    --ink:        #111111;
+    --ink-2:      #3d3a35;
+    --ink-3:      #6b6862;
+    --ink-4:      #9a968e;
+    --gold:       #a9774b;
+    --gold-deep:  #8a5e38;
+    --gold-light: #cda06f;
+    --gold-tint:  #faf6ef;
+    --gold-line:  #e7d3b4;
+    --paper:      #ffffff;
+    --card:       #fbfaf8;
+    --line:       #e4e0d8;
+    --success:    #0f9b6c;
+    --warning:    #b4802a;
+    --danger:     #c8443c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 594mm;
+    min-height: 841mm;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .poster {
+    width: 594mm;
+    min-height: 841mm;
+    padding: 15mm 15mm 11mm;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  /* â”€â”€â”€ Shared type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .eyebrow {
+    font-size: 11.5pt;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+  }
+  .sec-num {
+    font-size: 12pt;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+  h2 {
+    font-size: 23.5pt;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+  p, li { font-size: 14pt; line-height: 1.5; color: var(--ink-2); }
+  strong { font-weight: 700; color: var(--ink); }
+
+  /* â”€â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  header {
+    border-bottom: 1.4mm solid var(--ink);
+    padding-bottom: 7mm;
+    margin-bottom: 7mm;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12mm;
+    align-items: end;
+  }
+  .wordmark {
+    font-size: 33pt;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    margin-bottom: 5mm;
+  }
+  h1 {
+    font-size: 50pt;
+    font-weight: 900;
+    letter-spacing: -0.028em;
+    line-height: 1.02;
+    max-width: 380mm;
+  }
+  h1 .accent {
+    background-image: linear-gradient(135deg, #cda06f 0%, #9c6d44 60%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .strap {
+    font-size: 15.5pt;
+    color: var(--ink-3);
+    margin-top: 4mm;
+    max-width: 355mm;
+    line-height: 1.45;
+  }
+  .meta {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 3.2mm;
+    padding-bottom: 1mm;
+  }
+  .meta-row { line-height: 1.25; }
+  .meta-k {
+    font-size: 8.8pt; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-4); display: block;
+  }
+  .meta-v { font-size: 13.4pt; font-weight: 600; color: var(--ink); }
+  .tagline-chip {
+    display: inline-block;
+    margin-top: 1mm;
+    padding: 2.2mm 5mm;
+    border: 0.45mm solid var(--ink);
+    border-radius: 99mm;
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* â”€â”€â”€ Grid system â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .body { flex: 1; display: flex; flex-direction: column; gap: 7mm; }
+  .row { display: grid; gap: 7mm; }
+  .r3 { grid-template-columns: repeat(3, 1fr); }
+  .r2a { grid-template-columns: 2fr 1fr; }
+  .r12 { grid-template-columns: 1fr 1fr; }
+
+  .card {
+    background: var(--card);
+    border: 0.4mm solid var(--line);
+    border-radius: 3.5mm;
+    padding: 7.5mm 8mm;
+    display: flex;
+    flex-direction: column;
+  }
+  .card.plain { background: var(--paper); }
+  .card.tint  { background: var(--gold-tint); border-color: var(--gold-line); }
+
+  .card-head {
+    display: flex; align-items: baseline; gap: 4mm;
+    margin-bottom: 4.5mm; padding-bottom: 3.5mm;
+    border-bottom: 0.4mm solid var(--line);
+  }
+
+  ul { list-style: none; display: flex; flex-direction: column; gap: 2.6mm; }
+  ul li { position: relative; padding-left: 6.5mm; }
+  ul li::before {
+    content: ''; position: absolute; left: 0; top: 2.3mm;
+    width: 2.1mm; height: 2.1mm; border-radius: 50%; background: var(--gold);
+  }
+  ol.num { list-style: none; display: flex; flex-direction: column; gap: 2.6mm; counter-reset: o; }
+  ol.num li { position: relative; padding-left: 9mm; counter-increment: o; }
+  ol.num li::before {
+    content: counter(o, decimal-leading-zero);
+    position: absolute; left: 0; top: 0.2mm;
+    font-size: 10.5pt; font-weight: 800; color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* â”€â”€â”€ Feature grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .feat {
+    background: var(--paper);
+    border: 0.4mm solid var(--line);
+    border-radius: 2.5mm;
+    padding: 5.5mm 6mm;
+  }
+  .feat h3 { font-size: 14.2pt; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 1.6mm; }
+  .feat p  { font-size: 12.2pt; line-height: 1.44; color: var(--ink-3); }
+
+  /* â”€â”€â”€ Screenshots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5mm; }
+  .shot { display: flex; flex-direction: column; }
+  .shot-frame {
+    border: 0.4mm solid var(--line);
+    border-radius: 2.5mm;
+    overflow: hidden;
+    background: #e4e3e0;
+    box-shadow: 0 1.2mm 4mm rgba(45,35,20,0.10);
+    height: 126mm;
+  }
+  .shot-frame img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .shot-cap { margin-top: 2.6mm; }
+  .shot-cap b { display: block; font-size: 12.8pt; font-weight: 800; color: var(--ink); }
+  .shot-cap span { font-size: 11.2pt; color: var(--ink-3); line-height: 1.35; display: block; margin-top: 0.6mm; }
+
+  /* â”€â”€â”€ Pipeline diagram â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .pipe { display: flex; align-items: stretch; gap: 0; margin-top: 1mm; }
+  .pipe-step {
+    flex: 1; background: var(--paper); border: 0.4mm solid var(--gold-line);
+    border-radius: 2.5mm; padding: 4mm 3.5mm; text-align: center;
+  }
+  .pipe-step .n { font-size: 10.2pt; font-weight: 800; color: var(--gold); letter-spacing: 0.14em; }
+  .pipe-step .t { font-size: 13pt; font-weight: 800; margin-top: 1.4mm; line-height: 1.2; }
+  .pipe-step .d { font-size: 10.8pt; color: var(--ink-3); margin-top: 1.2mm; line-height: 1.32; }
+  .pipe-arrow {
+    display: flex; align-items: center; justify-content: center;
+    width: 8mm; flex-shrink: 0; color: var(--gold); font-size: 15pt; font-weight: 700;
+  }
+
+  /* â”€â”€â”€ Stat tiles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; margin-bottom: 4.5mm; }
+  .stat {
+    background: var(--paper); border: 0.4mm solid var(--gold-line);
+    border-radius: 2.5mm; padding: 4mm 3mm; text-align: center;
+  }
+  .stat .v { font-size: 27pt; font-weight: 900; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+  .stat .l { font-size: 10pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-top: 1.8mm; }
+
+  /* â”€â”€â”€ Tech chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .stack { display: flex; flex-direction: column; gap: 3.2mm; }
+  .stack-row { display: grid; grid-template-columns: 33mm 1fr; gap: 3mm; align-items: baseline; }
+  .stack-k { font-size: 10.2pt; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold-deep); }
+  .stack-v { font-size: 12.6pt; color: var(--ink-2); line-height: 1.4; }
+
+  /* â”€â”€â”€ Formula â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .formula {
+    background: var(--paper); border: 0.4mm solid var(--gold-line);
+    border-left: 1.6mm solid var(--gold);
+    border-radius: 2mm; padding: 4mm 5mm; margin: 3.5mm 0 1mm;
+  }
+  .formula code {
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 12.6pt; font-weight: 600; color: var(--ink); line-height: 1.45;
+  }
+  .formula .note { font-size: 10.8pt; color: var(--ink-3); margin-top: 2mm; display: block; }
+
+  /* â”€â”€â”€ Result rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .res-method {
+    font-size: 12pt; line-height: 1.45; color: var(--ink-3);
+    background: var(--paper); border: 0.4mm solid var(--line);
+    border-left: 1.6mm solid var(--gold);
+    border-radius: 2mm; padding: 3.4mm 4.5mm; margin-bottom: 3.8mm;
+  }
+  .res-group { margin-bottom: 3.4mm; }
+  .res-group:last-child { margin-bottom: 0; }
+  .res-gh {
+    font-size: 10.4pt; font-weight: 800; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gold-deep); margin-bottom: 2.6mm;
+  }
+  .res { display: flex; flex-direction: column; gap: 2.4mm; }
+  .res-row { display: grid; grid-template-columns: 1fr auto; gap: 4mm; align-items: baseline;
+             padding-bottom: 2.6mm; border-bottom: 0.35mm dotted var(--line); }
+  .res-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .res-l { font-size: 12.8pt; color: var(--ink-2); line-height: 1.38; }
+  .res-v { font-size: 13.6pt; font-weight: 800; color: var(--success); white-space: nowrap; }
+
+  /* â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  footer {
+    margin-top: 6mm; padding-top: 5mm; border-top: 0.9mm solid var(--ink);
+    display: flex; justify-content: space-between; align-items: center; gap: 10mm;
+  }
+  .foot-l { font-size: 11.4pt; color: var(--ink-3); line-height: 1.4; }
+  .foot-r { font-size: 11.4pt; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• HEADER â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <header>
+    <div>
+      <div class="wordmark">AIIQ</div>
+      <h1>An AI-Powered, <span class="accent">Source-Grounded</span><br>Learning &amp; Assessment Platform</h1>
+      <p class="strap">
+        AIIQ converts a student's own lecture notes, textbooks and slides into quizzes,
+        flashcards, study notes and a cited Q&amp;A assistant â€” then measures mastery topic
+        by topic to direct revision where it is actually needed.
+      </p>
+    </div>
+    <div class="meta">
+      <div class="meta-row">
+        <span class="meta-k">Author</span>
+        <span class="meta-v">Alok Yadav</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-k">Discipline</span>
+        <span class="meta-v">Computer Science Â· AI &amp; Web Systems</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-k">Build</span>
+        <span class="meta-v">Full-stack web application</span>
+      </div>
+      <div><span class="tagline-chip">Learn It. Quiz It. Win It.</span></div>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROW 1 â€” Overview / Problem / Objectives â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="row r3">
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">01</span><h2>Project Overview</h2></div>
+        <p style="margin-bottom:3.5mm">
+          AIIQ is a full-stack learning platform built around a single constraint:
+          <strong>every item it generates must be answerable from the material the student
+          uploaded</strong> â€” never from general knowledge.
+        </p>
+        <p style="margin-bottom:3.5mm">
+          A document is parsed to text, sent to a large language model under a strict
+          grounding contract, and returned as structured JSON. From one upload the system
+          produces four distinct study artefacts.
+        </p>
+        <p>
+          Every attempt is recorded and analysed, so the platform closes the loop from
+          <strong>source material â†’ assessment â†’ measured weakness â†’ targeted revision</strong>.
+        </p>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">02</span><h2>Problem</h2></div>
+        <ul>
+          <li><strong>Generic AI output.</strong> General-purpose assistants produce plausible
+              but off-syllabus questions, so practice does not reflect the actual course.</li>
+          <li><strong>Unverifiable answers.</strong> Students cannot tell which parts of an
+              AI answer came from their material and which were invented.</li>
+          <li><strong>Undirected revision.</strong> A single percentage score says nothing
+              about <em>which</em> topics are weak, so learners re-read what they already know.</li>
+          <li><strong>Fragmented tooling.</strong> Quiz generators, flashcard apps and note
+              summarisers are separate products that never share progress data.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">03</span><h2>Objectives</h2></div>
+        <ol class="num">
+          <li>Generate assessment <strong>strictly from user-supplied sources</strong>, with
+              outside knowledge explicitly prohibited at the prompt level.</li>
+          <li>Support <strong>four question formats</strong> across four difficulty bands.</li>
+          <li>Measure <strong>mastery per topic</strong> rather than a single aggregate score.</li>
+          <li>Automatically <strong>direct revision</strong> to the weakest topics after every attempt.</li>
+          <li>Deliver one <strong>connected journey</strong> â€” upload, generate, assess,
+              analyse â€” inside a single application.</li>
+        </ol>
+      </section>
+    </div>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROW 2 â€” Screenshots â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <section class="card plain">
+      <div class="card-head"><span class="sec-num">04</span><h2>The Application</h2></div>
+      <div class="shots">
+        <figure class="shot">
+          <div class="shot-frame"><img src="shots/workspace.png" alt="Subject workspace with study tools"></div>
+          <figcaption class="shot-cap"><b>Subject workspace</b><span>One upload drives quizzes, flashcards, notes and Q&amp;A.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot-frame"><img src="shots/quiz.png" alt="Timed quiz runner showing a generated question"></div>
+          <figcaption class="shot-cap"><b>Quiz runner</b><span>Timed and distraction-free; resumes after a refresh.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot-frame"><img src="shots/results.png" alt="Quiz results with per-topic accuracy breakdown"></div>
+          <figcaption class="shot-cap"><b>Results</b><span>Score, per-topic accuracy and revision guidance.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot-frame"><img src="shots/dashboard.png" alt="Student dashboard with derived statistics"></div>
+          <figcaption class="shot-cap"><b>Dashboard</b><span>Derived mastery stats and weakest-topic ranking.</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROW 3 â€” Features + Methodology â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="row r2a">
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">05</span><h2>Key Features</h2></div>
+        <div class="features">
+          <div class="feat"><h3>AI quiz generation</h3><p>MCQ, true/false, fill-in-the-blank and short answer, from Easy to Expert.</p></div>
+          <div class="feat"><h3>Flashcard decks</h3><p>Term/definition cards with shuffle and know-or-review tracking.</p></div>
+          <div class="feat"><h3>Study notes</h3><p>Overview, key points, concept map and study tips per subject.</p></div>
+          <div class="feat"><h3>Ask AIIQ</h3><p>Streaming Q&amp;A that answers only from uploads and cites the source line.</p></div>
+          <div class="feat"><h3>Timed quiz runner</h3><p>Per-question countdown, keyboard answering, resumes after refresh.</p></div>
+          <div class="feat"><h3>Adaptive coaching</h3><p>Post-attempt feedback naming weak topics and the next actions.</p></div>
+          <div class="feat"><h3>Topic analytics</h3><p>Accuracy per topic plus a 14-day activity history.</p></div>
+          <div class="feat"><h3>Live quiz rooms</h3><p>Real-time multiplayer over WebSockets with ELO and leaderboards.</p></div>
+          <div class="feat"><h3>Result export</h3><p>Full attempt data downloadable as CSV or JSON.</p></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">06</span><h2>Technology</h2></div>
+        <div class="stack">
+          <div class="stack-row"><span class="stack-k">Frontend</span><span class="stack-v">Next.js 15 (App Router), React 18, TypeScript, Tailwind CSS</span></div>
+          <div class="stack-row"><span class="stack-k">Backend</span><span class="stack-v">Next.js route handlers, custom Node server, Zod validation</span></div>
+          <div class="stack-row"><span class="stack-k">Database</span><span class="stack-v">PostgreSQL with Prisma ORM â€” 28 models, 11 enums</span></div>
+          <div class="stack-row"><span class="stack-k">Realtime</span><span class="stack-v">Socket.IO server for live quiz rooms</span></div>
+          <div class="stack-row"><span class="stack-k">Auth</span><span class="stack-v">JWT (jose) + bcrypt, httpOnly cookies, route middleware</span></div>
+          <div class="stack-row"><span class="stack-k">Payments</span><span class="stack-v">Stripe subscriptions (three tiers) with webhooks</span></div>
+          <div class="stack-row"><span class="stack-k">Infra</span><span class="stack-v">Docker Compose â€” PostgreSQL and Redis</span></div>
+        </div>
+        <div class="stats" style="margin-top:5mm;margin-bottom:0">
+          <div class="stat"><div class="v">23</div><div class="l">Pages</div></div>
+          <div class="stat"><div class="v">27</div><div class="l">API routes</div></div>
+          <div class="stat"><div class="v">28</div><div class="l">DB models</div></div>
+          <div class="stat"><div class="v">13.4k</div><div class="l">Lines TS</div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROW 4 â€” AI/DS + Results â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="row r12">
+
+      <section class="card tint">
+        <div class="card-head"><span class="sec-num">07</span><h2>AI &amp; Data Science Components</h2></div>
+
+        <div class="pipe">
+          <div class="pipe-step"><div class="n">01</div><div class="t">Extract</div><div class="d">PDF, DOCX, PPTX, TXT and image OCR</div></div>
+          <div class="pipe-arrow">â†’</div>
+          <div class="pipe-step"><div class="n">02</div><div class="t">Ground</div><div class="d">Strict source-only prompt contract</div></div>
+          <div class="pipe-arrow">â†’</div>
+          <div class="pipe-step"><div class="n">03</div><div class="t">Generate</div><div class="d">JSON-constrained LLM output</div></div>
+          <div class="pipe-arrow">â†’</div>
+          <div class="pipe-step"><div class="n">04</div><div class="t">Analyse</div><div class="d">Derived per-topic mastery</div></div>
+        </div>
+
+        <div class="stack" style="margin-top:5mm">
+          <div class="stack-row"><span class="stack-k">Model</span><span class="stack-v">Google Gemini 2.5 Flash â€” JSON-constrained, vision-capable for image OCR</span></div>
+          <div class="stack-row"><span class="stack-k">Grounding</span><span class="stack-v">Prompt contract forbids outside knowledge; produces fewer items rather than padding</span></div>
+          <div class="stack-row"><span class="stack-k">Dedup</span><span class="stack-v">SHA-256 fingerprint of normalised question text (16-hex prefix) blocks repeats</span></div>
+          <div class="stack-row"><span class="stack-k">Analytics</span><span class="stack-v">Accuracy, streaks and topic mastery derived from attempt records, never stored counters</span></div>
+        </div>
+
+        <div class="formula">
+          <code>score = 100 Ã— (0.5 + 0.5 Ã— t<sub>remaining</sub> / t<sub>total</sub>) Ã— d</code>
+          <span class="note">Time-weighted scoring. Difficulty multiplier <em>d</em> = 1.0 Easy Â· 1.5 Medium Â· 2.0 Hard Â· 3.0 Expert.
+          Speed is rewarded but accuracy dominates â€” a wrong answer scores zero regardless of time.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><span class="sec-num">08</span><h2>Results &amp; Evaluation</h2></div>
+        <p class="res-method">
+          <strong>Method.</strong> A single 377-word cellular-respiration lecture was uploaded as the
+          only source. Every artefact the system produced was checked against that text, and the
+          analytics layer was exercised with attempt data carrying known expected values.
+        </p>
+
+        <div class="res-group">
+          <p class="res-gh">A Â· Generation from one upload</p>
+          <div class="res">
+            <div class="res-row">
+              <span class="res-l">Flashcards produced, each tagged to a topic present in the source</span>
+              <span class="res-v">16 cards</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">Structured study notes â€” overview, key points, concept map, study tips</span>
+              <span class="res-v">8 key points</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">Duplicate questions suppressed by SHA-256 fingerprint before storage</span>
+              <span class="res-v">0 repeats</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <p class="res-gh">B Â· Grounding fidelity</p>
+          <div class="res">
+            <div class="res-row">
+              <span class="res-l">Q&amp;A answers quoted the originating sentence from the upload verbatim</span>
+              <span class="res-v">Cited</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">No outside knowledge appeared in any artefact; thin input yields fewer
+                items rather than invented padding</span>
+              <span class="res-v">On-source</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <p class="res-gh">C Â· Measurement accuracy</p>
+          <div class="res">
+            <div class="res-row">
+              <span class="res-l">Derived accuracy reproduced the expected value exactly (8 of 14 correct)</span>
+              <span class="res-v">57% Â· exact</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">Per-topic mastery aggregated correctly across multiple attempts â€”
+                electron transport 1/4, ATP synthesis 3/5, mitochondria 4/5</span>
+              <span class="res-v">25 / 60 / 80%</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">Weakest-topic ranking drove the revision recommendation surfaced to the learner</span>
+              <span class="res-v">Correct order</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="res-group">
+          <p class="res-gh">D Â· Adaptive feedback</p>
+          <div class="res">
+            <div class="res-row">
+              <span class="res-l">Coaching identified the failed topic (0 of 2 on mitochondria) and named
+                both mastered topics</span>
+              <span class="res-v">Identified</span>
+            </div>
+            <div class="res-row">
+              <span class="res-l">Recommended revision questions matched precisely the items answered incorrectly</span>
+              <span class="res-v">2 of 2</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROW 5 â€” Future scope â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <section class="card plain">
+      <div class="card-head"><span class="sec-num">09</span><h2>Future Scope</h2></div>
+      <div class="features" style="grid-template-columns:repeat(5,1fr)">
+        <div class="feat"><h3>Adaptive difficulty</h3><p>Activate the item-response-theory field already modelled in the schema to tune question difficulty per learner.</p></div>
+        <div class="feat"><h3>Spaced repetition</h3><p>Schedule flashcard review intervals from per-card recall history.</p></div>
+        <div class="feat"><h3>Horizontal scaling</h3><p>Move live-room state from memory to Redis so realtime runs multi-instance.</p></div>
+        <div class="feat"><h3>Battle validation</h3><p>Full multi-player load testing, with ELO driven by live match outcomes.</p></div>
+        <div class="feat"><h3>Institution mode</h3><p>Cohort dashboards so tutors can see aggregate topic weakness across a class.</p></div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="foot-l">
+      <strong>AIIQ</strong> â€” AI-powered learning and assessment platform Â·
+      Next.js 15 Â· TypeScript Â· PostgreSQL Â· Prisma Â· Socket.IO Â· Google Gemini<br>
+      All generated study material is grounded strictly in user-uploaded sources.
+    </div>
+    <div class="foot-r">Learn It. Quiz It. Win It.</div>
+  </footer>
+
+</div>
+</body>
+</html>

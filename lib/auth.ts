@@ -44,11 +44,19 @@ export function hashResetToken(rawToken: string): string {
   return crypto.createHash('sha256').update(rawToken).digest('hex')
 }
 
+// Access-token lifetime. There is no refresh-token endpoint wired up, so a
+// short 15m access token silently expired mid-session (the client keeps `user`
+// in localStorage, so the UI still looked logged in while API calls 401'd —
+// e.g. "Unauthorized" when creating a subject). Align it with the 7-day
+// session/refresh token so the session lasts as long as it claims to.
+// Override with ACCESS_TOKEN_TTL (e.g. '15m') once a refresh flow exists.
+const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL || '7d'
+
 export async function createTokens(payload: Omit<JWTPayload, 'iat' | 'exp'>) {
   const accessToken = await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('15m')
+    .setExpirationTime(ACCESS_TOKEN_TTL)
     .sign(JWT_SECRET)
 
   const refreshToken = await new SignJWT({ sub: payload.sub, sessionId: payload.sessionId })
@@ -125,7 +133,7 @@ export function setAuthCookies(
     httpOnly: true,
     secure,
     sameSite: 'lax',
-    maxAge: 60 * 15,
+    maxAge: 60 * 60 * 24 * 7, // 7 days — must match the access-token TTL above
     path: '/',
   })
 

@@ -1,63 +1,51 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Modal } from '@/components/ui/modal'
 import { FileUploader } from '@/components/ui/file-uploader'
-import { useAuth } from '@/hooks/useAuth'
 import { useToast } from '@/hooks/useToast'
+import { useAuth } from '@/hooks/useAuth'
+import { FlashcardDeck } from '@/components/subject/flashcard-deck'
+import { StudyNotes } from '@/components/subject/study-notes'
+import { AskPanel } from '@/components/subject/ask-panel'
 import {
-  BookOpen, Upload, Brain, ChevronLeft,
-  FileText, Image as ImageIcon, Type,
-  Sparkles, Check, X, Loader2, Clock, AlertTriangle,
+  Upload, Brain, ChevronLeft, FileText, Image as ImageIcon, Type,
+  Sparkles, Loader2, AlertTriangle, Layers, MessageSquare, BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type QuizQuestion = {
-  id: string
-  questionText: string
-  questionType: string
-  options: string[] | null
-  difficulty: string
-  topicTag: string | null
-  timeLimitSeconds: number
-}
+const TABS = [
+  { id: 'material', label: 'Material', icon: BookOpen },
+  { id: 'flashcards', label: 'Flashcards', icon: Layers },
+  { id: 'notes', label: 'Notes', icon: FileText },
+  { id: 'ask', label: 'Ask AIIQ', icon: MessageSquare },
+] as const
 
-const LETTER_LABELS = ['A', 'B', 'C', 'D']
+type TabId = (typeof TABS)[number]['id']
 
 export default function SubjectDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { user } = useAuth()
   const { toast } = useToast()
+  const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  // Material state
+  const [tab, setTab] = useState<TabId>('material')
   const [showUpload, setShowUpload] = useState(false)
   const [showGenerateQuiz, setShowGenerateQuiz] = useState(false)
   const [uploadText, setUploadText] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [quizConfig, setQuizConfig] = useState({ questionCount: 10, difficulty: 'MEDIUM', types: ['MCQ', 'TRUE_FALSE'] })
+  const [quizConfig, setQuizConfig] = useState({
+    questionCount: 10,
+    difficulty: 'MEDIUM',
+    types: ['MCQ', 'TRUE_FALSE'],
+  })
 
-  // Quiz state
-  const [generatedSession, setGeneratedSession] = useState<{ sessionId: string; questions: QuizQuestion[] } | null>(null)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
-  const [quizActive, setQuizActive] = useState(false)
-  const [quizResult, setQuizResult] = useState<any>(null)
-
-  // Timer
-  const [timeLeft, setTimeLeft] = useState(30)
-  const questionStartRef = useRef(Date.now())
-  const timeSpentMapRef = useRef<Record<string, number>>({})
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const { data: subjectData, isLoading } = useQuery({
+  const { data: subject, isLoading } = useQuery({
     queryKey: ['subject', params.id],
     queryFn: async () => {
       const res = await fetch(`/api/subjects/${params.id}`)
@@ -65,43 +53,6 @@ export default function SubjectDetailPage() {
       return res.json().then((d: any) => d.data)
     },
   })
-
-  const question = generatedSession?.questions[currentQuestion]
-
-  // Per-question countdown timer
-  useEffect(() => {
-    if (!quizActive || !question) return
-
-    setTimeLeft(question.timeLimitSeconds)
-    questionStartRef.current = Date.now()
-
-    if (timerRef.current) clearInterval(timerRef.current)
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => Math.max(0, prev - 1))
-    }, 1000)
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
-      // Record actual time spent before unmounting
-      timeSpentMapRef.current[question.id] = Math.min(
-        Date.now() - questionStartRef.current,
-        question.timeLimitSeconds * 1000,
-      )
-    }
-  }, [question?.id, quizActive])
-
-  // Keyboard shortcuts: 1-4 to pick MCQ option
-  useEffect(() => {
-    if (!quizActive || !question?.options) return
-    const handler = (e: KeyboardEvent) => {
-      const num = parseInt(e.key)
-      if (num >= 1 && num <= (question.options?.length ?? 0)) {
-        setSelectedAnswers((prev) => ({ ...prev, [question.id]: question.options![num - 1] }))
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [question?.id, question?.options, quizActive])
 
   const generateQuiz = useMutation({
     mutationFn: async () => {
@@ -120,48 +71,12 @@ export default function SubjectDetailPage() {
       return json.data
     },
     onSuccess: (data) => {
-      setGeneratedSession(data)
       setShowGenerateQuiz(false)
-      setQuizActive(true)
-      setCurrentQuestion(0)
-      setSelectedAnswers({})
-      timeSpentMapRef.current = {}
-      toast.success('Quiz generated!', `${data.totalQuestions} questions ready.`)
+      toast.success('Quiz ready', `${data.totalQuestions} questions generated.`)
+      router.push(`/quiz/${data.sessionId}`)
     },
-    onError: (err: Error) => {
-      toast.error('Generation failed', err.message)
-    },
+    onError: (err: Error) => toast.error('Generation failed', err.message),
   })
-
-  const submitQuiz = async () => {
-    if (!generatedSession) return
-    // Capture time for the current question
-    if (question) {
-      timeSpentMapRef.current[question.id] = Math.min(
-        Date.now() - questionStartRef.current,
-        question.timeLimitSeconds * 1000,
-      )
-    }
-    try {
-      const answers = generatedSession.questions.map((q) => ({
-        questionId: q.id,
-        selectedAnswer: selectedAnswers[q.id] || '',
-        timeSpentMs: timeSpentMapRef.current[q.id] ?? q.timeLimitSeconds * 1000,
-      }))
-      const res = await fetch(`/api/quiz/${generatedSession.sessionId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error)
-      // Stash questions so results view can show question text
-      setQuizResult({ ...json.data, _questions: generatedSession.questions })
-      setQuizActive(false)
-    } catch (err: unknown) {
-      toast.error('Failed to submit', err instanceof Error ? err.message : 'Try again')
-    }
-  }
 
   const uploadMaterial = async () => {
     if (!uploadText.trim()) return
@@ -174,12 +89,12 @@ export default function SubjectDetailPage() {
           subjectId: params.id,
           type: 'TEXT',
           content: uploadText,
-          fileName: 'text-material.txt',
+          fileName: 'pasted-notes.txt',
         }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
-      toast.success('Material uploaded!', 'You can now generate quizzes from it.')
+      toast.success('Material added', 'You can now generate study tools from it.')
       setShowUpload(false)
       setUploadText('')
       queryClient.invalidateQueries({ queryKey: ['subject', params.id] })
@@ -192,411 +107,245 @@ export default function SubjectDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-allq-purple" />
+      <div className="app-canvas flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-gold-deep" />
       </div>
     )
   }
-
-  const subject = subjectData
 
   if (!subject) {
     return (
-      <div className="p-8 text-center">
-        <p className="text-slate-400">Subject not found.</p>
-        <Button variant="ghost" className="mt-4" onClick={() => router.push('/subjects')}>
-          <ChevronLeft className="h-4 w-4" /> Back to Subjects
-        </Button>
-      </div>
-    )
-  }
-
-  const isOwner = subject.creator?.id === user?.id
-  const totalQuestions = generatedSession?.questions.length ?? 0
-  const answeredCount = Object.keys(selectedAnswers).length
-  const timerPercent = question ? (timeLeft / question.timeLimitSeconds) * 100 : 100
-  const isTimerLow = timerPercent < 33
-
-  /* ─── Quiz Active View ─── */
-  if (quizActive && generatedSession && question) {
-    const progress = ((currentQuestion + 1) / totalQuestions) * 100
-    const isAnswered = !!selectedAnswers[question.id]
-
-    return (
-      <div className="min-h-screen p-4 md:p-6 flex flex-col max-w-3xl mx-auto">
-        {/* Top bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-400">
-              Q {currentQuestion + 1}
-              <span className="text-slate-600"> / {totalQuestions}</span>
-            </span>
-            {/* Progress dots */}
-            <div className="flex gap-1">
-              {generatedSession.questions.map((q, i) => (
-                <div
-                  key={q.id}
-                  className={cn(
-                    'h-1.5 rounded-full transition-all duration-300',
-                    i === currentQuestion
-                      ? 'w-4 bg-allq-purple'
-                      : selectedAnswers[q.id]
-                      ? 'w-1.5 bg-allq-green/60'
-                      : 'w-1.5 bg-white/10',
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Timer */}
-            <div className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-bold text-sm border transition-all',
-              isTimerLow
-                ? 'text-allq-red border-allq-red/30 bg-allq-red/10 animate-pulse'
-                : timeLeft <= question.timeLimitSeconds / 2
-                ? 'text-allq-amber border-allq-amber/20 bg-allq-amber/5'
-                : 'text-slate-300 border-white/10 bg-white/5',
-            )}>
-              <Clock className="h-3.5 w-3.5" />
-              {timeLeft}s
-            </div>
-            <button
-              onClick={() => { setQuizActive(false); setGeneratedSession(null) }}
-              className="text-xs text-slate-500 hover:text-white transition-colors px-2 py-1.5"
-            >
-              Exit
-            </button>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div className="h-1 bg-white/5 rounded-full overflow-hidden mb-6">
-          <motion.div
-            className="h-full bg-gradient-to-r from-allq-purple to-allq-cyan rounded-full"
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={question.id}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.2 }}
-            className="flex-1"
-          >
-            {/* Question card */}
-            <div className="glass rounded-2xl p-5 md:p-6 mb-5">
-              <div className="flex items-center gap-2 mb-4 flex-wrap">
-                <Badge variant="purple" size="sm">{question.difficulty}</Badge>
-                {question.topicTag && <Badge variant="default" size="sm">{question.topicTag}</Badge>}
-                <Badge variant="cyan" size="sm">{question.questionType.replace(/_/g, ' ')}</Badge>
-              </div>
-              <p className="text-lg md:text-xl font-semibold text-white leading-relaxed">
-                {question.questionText}
-              </p>
-            </div>
-
-            {/* MCQ / TRUE_FALSE options */}
-            {question.options && (
-              <div className="space-y-2.5">
-                {question.options.map((option, idx) => {
-                  const selected = selectedAnswers[question.id] === option
-                  return (
-                    <button
-                      key={option}
-                      onClick={() => setSelectedAnswers((prev) => ({ ...prev, [question.id]: option }))}
-                      className={cn(
-                        'w-full text-left glass rounded-xl px-4 py-3.5 text-sm font-medium transition-all duration-150 border group',
-                        selected
-                          ? 'border-allq-purple/60 bg-allq-purple/10 text-white shadow-neon-sm'
-                          : 'border-white/5 text-slate-300 hover:border-allq-purple/30 hover:text-white hover:bg-white/5',
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          'h-7 w-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 text-xs font-bold transition-all',
-                          selected
-                            ? 'border-allq-purple bg-allq-purple text-white'
-                            : 'border-white/20 text-slate-500 group-hover:border-white/40',
-                        )}>
-                          {selected ? <Check className="h-3.5 w-3.5" /> : LETTER_LABELS[idx]}
-                        </div>
-                        <span>{option}</span>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Fill in blank / Short answer */}
-            {!question.options && (
-              <input
-                value={selectedAnswers[question.id] || ''}
-                onChange={(e) => setSelectedAnswers((prev) => ({ ...prev, [question.id]: e.target.value }))}
-                placeholder="Type your answer here..."
-                className="input-glass w-full rounded-xl px-4 py-4 text-base"
-                autoFocus
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
-          <Button
-            variant="ghost"
-            disabled={currentQuestion === 0}
-            onClick={() => setCurrentQuestion((n) => n - 1)}
-          >
-            <ChevronLeft className="h-4 w-4" /> Prev
+      <div className="app-canvas flex items-center justify-center p-6">
+        <div className="surface-card p-10 text-center max-w-sm">
+          <h1 className="font-bold text-ink mb-2">Subject not found</h1>
+          <p className="text-sm text-ink-muted mb-5">
+            It may have been deleted, or you do not have access to it.
+          </p>
+          <Button variant="secondary" onClick={() => router.push('/subjects')}>
+            Back to subjects
           </Button>
-
-          <div className="flex items-center gap-2">
-            {!isAnswered && question.options && (
-              <span className="text-xs text-slate-600 hidden sm:block">Press 1–{question.options.length} to select</span>
-            )}
-
-            {currentQuestion < totalQuestions - 1 ? (
-              <Button
-                onClick={() => setCurrentQuestion((n) => n + 1)}
-                variant={isAnswered ? 'primary' : 'secondary'}
-              >
-                {isAnswered ? 'Next →' : 'Skip →'}
-              </Button>
-            ) : (
-              <Button
-                variant="cyan"
-                onClick={submitQuiz}
-                disabled={answeredCount === 0}
-              >
-                Submit Quiz ({answeredCount}/{totalQuestions})
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     )
   }
 
-  /* ─── Quiz Result View ─── */
-  if (quizResult) {
-    const questionMap = new Map<string, QuizQuestion>(
-      (quizResult._questions as QuizQuestion[] || []).map((q) => [q.id, q]),
-    )
+  const materials = subject.materials ?? []
+  const readyMaterials = materials.filter((m: any) => m.status === 'READY')
+  const hasMaterials = readyMaterials.length > 0
+  // Only the subject's creator can add material or generate quizzes — the API
+  // enforces this (returns "Subject not found or access denied" otherwise), so
+  // we hide those actions on subjects the current user does not own.
+  const isOwner = !!user && subject.creator?.id === user.id
 
-    return (
-      <div className="p-4 md:p-6 max-w-2xl mx-auto">
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-          <div className="text-center mb-6">
-            <div className="text-5xl mb-3">
-              {quizResult.accuracy >= 80 ? '🏆' : quizResult.accuracy >= 60 ? '✨' : '📚'}
-            </div>
-            <h2 className="text-2xl font-black text-white mb-1">
-              {quizResult.accuracy >= 80 ? 'Excellent!' : quizResult.accuracy >= 60 ? 'Good Job!' : 'Keep Learning!'}
-            </h2>
-            <p className="text-slate-400 text-sm">Quiz completed</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            {[
-              { label: 'Score', value: quizResult.score, sub: `/ ${quizResult.maxScore}` },
-              { label: 'Correct', value: `${quizResult.correctAnswers}/${quizResult.totalQuestions}` },
-              { label: 'Accuracy', value: `${quizResult.accuracy}%` },
-            ].map((s) => (
-              <div key={s.label} className="glass rounded-2xl p-4 text-center">
-                <div className="text-xl font-black gradient-text">{s.value}</div>
-                {s.sub && <div className="text-xs text-slate-500">{s.sub}</div>}
-                <div className="text-xs text-slate-400 mt-1">{s.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-3 mb-6 max-h-[52vh] overflow-y-auto pr-1">
-            {quizResult.answers?.map((ans: any, i: number) => {
-              const q = questionMap.get(ans.questionId)
-              return (
-                <div
-                  key={i}
-                  className={cn(
-                    'glass rounded-xl p-4 border',
-                    ans.isCorrect ? 'border-allq-green/20' : 'border-allq-red/20',
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      'h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5',
-                      ans.isCorrect ? 'bg-allq-green/15' : 'bg-allq-red/15',
-                    )}>
-                      {ans.isCorrect
-                        ? <Check className="h-3.5 w-3.5 text-allq-green" />
-                        : <X className="h-3.5 w-3.5 text-allq-red" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      {q && (
-                        <p className="text-sm font-semibold text-white mb-2 leading-snug">{q.questionText}</p>
-                      )}
-                      <div className="space-y-0.5">
-                        <p className="text-xs text-slate-400">
-                          Your answer:{' '}
-                          <span className={cn('font-medium', ans.isCorrect ? 'text-allq-green' : 'text-allq-red')}>
-                            {ans.selectedAnswer || 'Not answered'}
-                          </span>
-                        </p>
-                        {!ans.isCorrect && (
-                          <p className="text-xs text-slate-400">
-                            Correct: <span className="text-allq-green font-medium">{ans.correctAnswer}</span>
-                          </p>
-                        )}
-                        {ans.explanation && (
-                          <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">{ans.explanation}</p>
-                        )}
-                      </div>
-                    </div>
-                    <span className={cn('text-xs font-bold flex-shrink-0', ans.isCorrect ? 'text-allq-green' : 'text-slate-600')}>
-                      +{ans.pointsEarned}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1" onClick={() => { setQuizResult(null); setGeneratedSession(null) }}>
-              Back to Subject
-            </Button>
-            <Button className="flex-1" onClick={() => { setQuizResult(null); setShowGenerateQuiz(true) }}>
-              <Brain className="h-4 w-4" /> New Quiz
-            </Button>
-          </div>
-        </motion.div>
-      </div>
-    )
-  }
-
-  /* ─── Subject Detail View ─── */
   return (
-    <div className="p-6 lg:p-8 max-w-5xl">
-      <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-6">
-        <ChevronLeft className="h-4 w-4" /> Back
-      </button>
+    <div className="app-canvas px-5 py-7 lg:px-9 lg:py-9">
+      <div className="max-w-5xl mx-auto">
+        <button
+          onClick={() => router.push('/subjects')}
+          className="flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-6"
+        >
+          <ChevronLeft className="h-4 w-4" /> Subjects
+        </button>
 
-      <div className="flex items-start justify-between flex-wrap gap-4 mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant="purple">{subject.difficulty}</Badge>
-            <Badge variant="default">{subject.category}</Badge>
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gold-50 text-gold-700 border border-gold-200">
+              {subject.difficulty}
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/[0.04] text-ink-muted">
+              {subject.category}
+            </span>
           </div>
-          <h1 className="text-3xl font-black text-white mb-1">{subject.title}</h1>
-          <p className="text-slate-400 max-w-2xl">{subject.description}</p>
-          <div className="flex flex-wrap gap-1.5 mt-3">
-            {subject.tags?.map((tag: string) => (
-              <span key={tag} className="text-xs bg-white/5 text-slate-400 px-2.5 py-1 rounded-full border border-white/5">{tag}</span>
-            ))}
+          <h1 className="display text-3xl sm:text-4xl mb-2">{subject.title}</h1>
+          {subject.description && (
+            <p className="text-sm text-ink-secondary max-w-2xl leading-relaxed">
+              {subject.description}
+            </p>
+          )}
+        </motion.div>
+
+        {/* Primary actions — only the creator can add material / generate quizzes */}
+        {isOwner ? (
+          <div className="flex flex-wrap gap-2.5 mt-6">
+            <Button onClick={() => setShowGenerateQuiz(true)} disabled={!hasMaterials}>
+              <Brain className="h-4 w-4" /> Generate quiz
+            </Button>
+            <Button variant="secondary" onClick={() => setShowUpload(true)}>
+              <Upload className="h-4 w-4" /> Add material
+            </Button>
           </div>
+        ) : (
+          <div className="flex items-start gap-2.5 mt-6 p-4 rounded-xl bg-black/[0.03] border border-line-warm">
+            <BookOpen className="h-4 w-4 text-ink-muted flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-ink-secondary leading-relaxed">
+              You&apos;re viewing a public subject{subject.creator?.name ? ` by ${subject.creator.name}` : ''}.
+              Only its creator can add material or generate quizzes.{' '}
+              <button onClick={() => router.push('/subjects')} className="font-semibold text-gold-700 hover:underline">
+                Create your own subject
+              </button>{' '}to upload notes and build quizzes.
+            </p>
+          </div>
+        )}
+
+        {!hasMaterials && (
+          <div className="flex items-start gap-2.5 mt-5 p-4 rounded-xl bg-warning-tint border border-warning/25">
+            <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-warning leading-relaxed">
+              This subject has no readable material yet. Everything AIIQ generates —
+              quizzes, flashcards, notes and answers — comes strictly from what you upload.
+            </p>
+          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="flex gap-1 mt-8 border-b border-line-warm overflow-x-auto">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-3 text-[13px] font-medium border-b-2 -mb-px transition-colors whitespace-nowrap',
+                tab === t.id
+                  ? 'border-gold-deep text-ink'
+                  : 'border-transparent text-ink-muted hover:text-ink',
+              )}
+            >
+              <t.icon className="h-4 w-4" />
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={() => setShowUpload(true)} variant="secondary">
-            <Upload className="h-4 w-4" /> Upload Material
-          </Button>
-          <Button onClick={() => setShowGenerateQuiz(true)}>
-            <Brain className="h-4 w-4" /> Generate Quiz
-          </Button>
-        </div>
-      </div>
+        {/* Panels */}
+        <div className="mt-7">
+          {tab === 'material' && (
+            <div className="grid lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <h2 className="text-sm font-bold text-ink mb-4">
+                  Uploaded material ({materials.length})
+                </h2>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-allq-cyan" /> Materials ({subject.materials?.length || 0})
-          </h2>
-
-          {subject.materials?.length === 0 ? (
-            <div className="glass rounded-2xl p-8 text-center">
-              <Upload className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-white font-semibold mb-1">No materials yet</p>
-              <p className="text-slate-400 text-sm mb-4">Upload your notes, PDFs, or text to generate AI quizzes</p>
-              <Button onClick={() => setShowUpload(true)} size="sm">
-                <Upload className="h-4 w-4" /> Upload Material
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {subject.materials?.map((mat: any) => (
-                <div key={mat.id} className="glass-hover rounded-xl px-4 py-3 flex items-center gap-3">
-                  {mat.type === 'PDF' ? <FileText className="h-5 w-5 text-allq-red" /> :
-                   mat.type === 'IMAGE' ? <ImageIcon className="h-5 w-5 text-allq-cyan" /> :
-                   <Type className="h-5 w-5 text-allq-purple" />}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{mat.fileName}</p>
-                    <p className="text-xs text-slate-500">{mat.type} · {(mat.fileSize / 1024).toFixed(1)} KB</p>
+                {materials.length === 0 ? (
+                  <div className="surface-card p-10 text-center">
+                    <span className="h-12 w-12 rounded-2xl bg-gold-50 border border-gold-200 flex items-center justify-center mx-auto mb-4">
+                      <Upload className="h-5 w-5 text-gold-700" />
+                    </span>
+                    <h3 className="font-bold text-ink mb-1.5">Nothing uploaded yet</h3>
+                    <p className="text-sm text-ink-muted mb-5 max-w-sm mx-auto leading-relaxed">
+                      {isOwner
+                        ? 'Add a PDF, Word doc, slides, an image of your notes, or paste text directly. This is the only source AIIQ will use.'
+                        : 'The creator of this subject has not added any material yet.'}
+                    </p>
+                    {isOwner && (
+                      <Button onClick={() => setShowUpload(true)}>
+                        <Upload className="h-4 w-4" /> Add material
+                      </Button>
+                    )}
                   </div>
-                  <Badge variant={mat.status === 'READY' ? 'green' : mat.status === 'FAILED' ? 'red' : 'amber'} size="sm">
-                    {mat.status}
-                  </Badge>
+                ) : (
+                  <div className="space-y-2.5">
+                    {materials.map((mat: any) => (
+                      <div key={mat.id} className="surface-card px-4 py-3.5 flex items-center gap-3">
+                        <span className="h-9 w-9 rounded-lg surface-sunken flex items-center justify-center flex-shrink-0">
+                          {mat.type === 'PDF' ? <FileText className="h-4 w-4 text-ink-muted" />
+                            : mat.type === 'IMAGE' ? <ImageIcon className="h-4 w-4 text-ink-muted" />
+                            : <Type className="h-4 w-4 text-ink-muted" />}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-ink truncate">{mat.fileName}</p>
+                          <p className="text-xs text-ink-faint">
+                            {mat.type} · {(mat.fileSize / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+                        <span
+                          className={cn(
+                            'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0',
+                            mat.status === 'READY' ? 'bg-success-tint text-success'
+                              : mat.status === 'FAILED' ? 'bg-danger-tint text-danger'
+                              : 'bg-warning-tint text-warning',
+                          )}
+                        >
+                          {mat.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Side stats */}
+              <div className="space-y-4">
+                <div className="surface-card p-5">
+                  <p className="label-eyebrow mb-4">This subject</p>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Materials', value: subject._count?.materials ?? materials.length },
+                      { label: 'Questions', value: subject._count?.questionBank ?? 0 },
+                    ].map((s) => (
+                      <div key={s.label} className="flex items-center justify-between text-sm">
+                        <span className="text-ink-muted">{s.label}</span>
+                        <span className="font-bold text-ink">{s.value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+
+                {subject.tags?.length > 0 && (
+                  <div className="surface-card p-5">
+                    <p className="label-eyebrow mb-3">Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {subject.tags.map((tag: string) => (
+                        <span key={tag} className="text-xs surface-sunken text-ink-secondary px-2.5 py-1">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </div>
 
-        <div className="space-y-4">
-          <Card>
-            <CardHeader><CardTitle>Subject Stats</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { label: 'Materials', value: subject._count?.materials || 0 },
-                { label: 'Questions', value: subject._count?.questionBank || 0 },
-                { label: 'Enrolled', value: subject._count?.enrollments || 0 },
-              ].map((s) => (
-                <div key={s.label} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400">{s.label}</span>
-                  <span className="font-bold text-white">{s.value}</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          {tab === 'flashcards' && (
+            <FlashcardDeck subjectId={String(params.id)} hasMaterials={hasMaterials} />
+          )}
 
-          <Card>
-            <CardHeader><CardTitle>Creator</CardTitle></CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-allq-purple to-allq-cyan flex items-center justify-center text-white font-bold">
-                  {(subject.creator?.name || '?')[0].toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{subject.creator?.name || 'Unknown'}</p>
-                  <p className="text-xs text-slate-400">Subject Creator</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {tab === 'notes' && (
+            <StudyNotes subjectId={String(params.id)} hasMaterials={hasMaterials} />
+          )}
+
+          {tab === 'ask' && (
+            <AskPanel
+              subjectId={String(params.id)}
+              subjectTitle={subject.title}
+              hasMaterials={hasMaterials}
+            />
+          )}
         </div>
       </div>
 
-      {/* Upload Modal */}
-      <Modal open={showUpload} onOpenChange={setShowUpload} size="lg" title="Upload Study Material" description="Upload PDFs, Word docs, PowerPoint, text files or images. AI generates quizzes, flashcards & notes from these — and only these.">
+      {/* Upload modal */}
+      <Modal
+        open={showUpload}
+        onOpenChange={setShowUpload}
+        size="lg"
+        title="Add study material"
+        description="PDFs, Word docs, slides, text files or images. Everything AIIQ generates comes from these — and only these."
+      >
         <div className="space-y-5">
           <FileUploader
             subjectId={String(params.id)}
             onUploaded={() => queryClient.invalidateQueries({ queryKey: ['subject', params.id] })}
           />
 
-          {/* Or paste text */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-300">…or paste text directly</label>
+            <label className="text-sm font-medium text-ink-secondary">…or paste text directly</label>
             <textarea
               value={uploadText}
               onChange={(e) => setUploadText(e.target.value)}
-              placeholder="Paste study notes, textbook content, lecture notes…"
-              className="input-glass w-full rounded-xl px-4 py-3 text-sm resize-none h-28"
+              placeholder="Paste lecture notes, a textbook section, revision notes…"
+              className="input-light w-full px-4 py-3 text-sm resize-none h-28"
             />
             {uploadText.trim().length > 0 && (
               <div className="flex justify-end">
@@ -613,36 +362,41 @@ export default function SubjectDetailPage() {
         </div>
       </Modal>
 
-      {/* Generate Quiz Modal */}
-      <Modal open={showGenerateQuiz} onOpenChange={setShowGenerateQuiz} title="Generate AI Quiz" description="Configure your quiz. Questions are generated from your uploaded materials.">
+      {/* Generate quiz modal */}
+      <Modal
+        open={showGenerateQuiz}
+        onOpenChange={setShowGenerateQuiz}
+        title="Generate a quiz"
+        description="Questions are written from your uploaded material only."
+      >
         <div className="space-y-5">
           <div>
-            <label className="text-sm font-medium text-slate-300 block mb-2">
-              Questions: <span className="text-allq-purple font-bold">{quizConfig.questionCount}</span>
+            <label className="text-sm font-medium text-ink-secondary block mb-2">
+              Questions: <span className="font-bold text-gold-700">{quizConfig.questionCount}</span>
             </label>
             <input
               type="range" min="5" max="50" step="5"
               value={quizConfig.questionCount}
               onChange={(e) => setQuizConfig((c) => ({ ...c, questionCount: Number(e.target.value) }))}
-              className="w-full accent-allq-purple"
+              className="w-full accent-gold-deep"
             />
-            <div className="flex justify-between text-xs text-slate-500 mt-1">
+            <div className="flex justify-between text-xs text-ink-faint mt-1">
               <span>5</span><span>50</span>
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-300 block mb-2">Difficulty</label>
+            <label className="text-sm font-medium text-ink-secondary block mb-2">Difficulty</label>
             <div className="grid grid-cols-4 gap-2">
               {['EASY', 'MEDIUM', 'HARD', 'EXPERT'].map((d) => (
                 <button
                   key={d}
                   onClick={() => setQuizConfig((c) => ({ ...c, difficulty: d }))}
                   className={cn(
-                    'py-2 rounded-lg text-xs font-semibold transition-all border',
+                    'py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-colors border',
                     quizConfig.difficulty === d
-                      ? 'bg-allq-purple/15 text-allq-purple border-allq-purple/40'
-                      : 'text-slate-400 border-white/5 hover:border-white/15',
+                      ? 'bg-gold-50 text-gold-700 border-gold-300'
+                      : 'text-ink-muted border-line-warm hover:border-gold-200',
                   )}
                 >
                   {d}
@@ -652,7 +406,7 @@ export default function SubjectDetailPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-300 block mb-2">Question Types</label>
+            <label className="text-sm font-medium text-ink-secondary block mb-2">Question types</label>
             <div className="grid grid-cols-2 gap-2">
               {['MCQ', 'TRUE_FALSE', 'FILL_IN_THE_BLANK', 'SHORT_ANSWER'].map((type) => {
                 const active = quizConfig.types.includes(type)
@@ -664,10 +418,10 @@ export default function SubjectDetailPage() {
                       types: active ? c.types.filter((t) => t !== type) : [...c.types, type],
                     }))}
                     className={cn(
-                      'py-2 rounded-lg text-xs font-medium transition-all border',
+                      'py-2 rounded-lg text-xs font-medium transition-colors border',
                       active
-                        ? 'bg-allq-cyan/15 text-allq-cyan border-allq-cyan/30'
-                        : 'text-slate-400 border-white/5 hover:border-white/15',
+                        ? 'bg-gold-50 text-gold-700 border-gold-300'
+                        : 'text-ink-muted border-line-warm hover:border-gold-200',
                     )}
                   >
                     {type.replace(/_/g, ' ')}
@@ -677,23 +431,14 @@ export default function SubjectDetailPage() {
             </div>
           </div>
 
-          {subject.materials?.length === 0 && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-allq-amber/10 border border-allq-amber/20">
-              <AlertTriangle className="h-4 w-4 text-allq-amber flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-allq-amber">
-                No materials uploaded yet. Upload study files first — questions are generated only from your uploaded content.
-              </p>
-            </div>
-          )}
-
-          <div className="flex gap-2 justify-end pt-2">
+          <div className="flex gap-2 justify-end pt-1">
             <Button variant="ghost" onClick={() => setShowGenerateQuiz(false)}>Cancel</Button>
             <Button
               loading={generateQuiz.isPending}
               onClick={() => generateQuiz.mutate()}
-              disabled={quizConfig.types.length === 0 || subject.materials?.length === 0}
+              disabled={quizConfig.types.length === 0 || !hasMaterials}
             >
-              <Sparkles className="h-4 w-4" /> Generate Quiz
+              <Sparkles className="h-4 w-4" /> Generate
             </Button>
           </div>
         </div>
